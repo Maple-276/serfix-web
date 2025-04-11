@@ -23,7 +23,8 @@ import {
   Email as EmailIcon,
   Lock as LockIcon,
   EmojiObjects as TipIcon,
-  Person as PersonIcon
+  Person as PersonIcon,
+  ArrowBack as ArrowBackIcon
 } from '@mui/icons-material';
 import phoneScrewdriver from '../assets/phone-screwdriver.svg';
 
@@ -356,6 +357,25 @@ interface RegisterData extends AuthCredentials {
   name: string;
   confirmPassword: string;
 }
+
+const BackButton = styled(Button)(({ theme }) => ({
+  position: 'absolute',
+  top: 20,
+  left: 20,
+  minWidth: 'auto',
+  borderRadius: 8,
+  padding: '8px 12px',
+  backgroundColor: alpha(theme.palette.common.black, 0.05),
+  color: theme.palette.text.secondary,
+  fontWeight: 600,
+  zIndex: 10,
+  transition: 'all 0.3s',
+  
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.black, 0.1),
+    transform: 'translateX(-3px)',
+  }
+}));
 
 const LoginPage = () => {
   const theme = useTheme();
@@ -868,6 +888,13 @@ const LoginPage = () => {
 
   return (
     <AuthContainer>
+      <BackButton
+        startIcon={<ArrowBackIcon />}
+        onClick={() => navigate(-1)}
+      >
+        Volver
+      </BackButton>
+      
       <Fade in={true} timeout={800}>
         <AuthPaper elevation={10}>
           <IllustrationContainer isRegister={isRegister}>

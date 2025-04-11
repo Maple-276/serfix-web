@@ -23,7 +23,7 @@ const HomePage = () => {
   const theme = useTheme();
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'white' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'white', width: '100vw', overflowX: 'hidden' }}>
       {/* Header/Nav */}
       <Box sx={{ 
         background: 'linear-gradient(90deg, #c31c17 0%, #e53935 100%)',
@@ -37,7 +37,8 @@ const HomePage = () => {
         position: 'sticky',
         top: 0,
         zIndex: 100,
-        backdropFilter: 'blur(8px)'
+        backdropFilter: 'blur(8px)',
+        width: '100%'
       }}>
         <Box sx={{ 
           display: 'flex', 
@@ -140,18 +141,36 @@ const HomePage = () => {
             component={Link}
             to={user ? "/dashboard" : "/login"}
             sx={{ 
-              bgcolor: 'white', 
-              color: theme.palette.primary.main,
+              bgcolor: user ? 'white' : 'linear-gradient(135deg, #f5d742 0%, #daa520 50%, #b8860b 100%)',
+              color: user ? theme.palette.primary.main : '#ffffff',
               fontWeight: 'bold',
               px: { xs: 2, md: 3 },
               py: 1,
               borderRadius: '24px',
-              boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
+              boxShadow: user ? '0 4px 14px rgba(0,0,0,0.15)' : '0 10px 20px rgba(218, 165, 32, 0.3)',
               transition: 'all 0.3s ease',
+              border: user ? 'none' : '1px solid rgba(218, 165, 32, 0.5)',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                background: 'linear-gradient(to right, rgba(255, 255, 255, 0.1), transparent, rgba(255, 255, 255, 0.1))',
+                transform: 'translateX(-100%)',
+                transition: 'transform 0.6s',
+                display: user ? 'none' : 'block'
+              },
               '&:hover': { 
-                bgcolor: 'white',
+                bgcolor: user ? 'white' : 'linear-gradient(135deg, #f7df5e 0%, #e6b422 50%, #cd9b1d 100%)',
                 transform: 'translateY(-3px)',
-                boxShadow: '0 6px 20px rgba(0,0,0,0.2)'
+                boxShadow: user ? '0 6px 20px rgba(0,0,0,0.2)' : '0 15px 30px rgba(218, 165, 32, 0.4)',
+                '&::after': {
+                  transform: 'translateX(100%)'
+                }
               }
             }}
           >
@@ -163,13 +182,14 @@ const HomePage = () => {
       {/* Hero Section */}
       <Box sx={{ 
         py: { xs: 6, md: 10 },
-        px: { xs: 2, md: 4 },
+        px: { xs: 0, md: 0 },
         minHeight: 'calc(100vh - 82px)',
         display: 'flex',
         alignItems: 'center',
         background: `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.05)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`,
         position: 'relative',
         overflow: 'hidden',
+        width: '100%',
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -183,7 +203,7 @@ const HomePage = () => {
           zIndex: 0
         }
       }}>
-        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2 }}>
+        <Container maxWidth={false} sx={{ position: 'relative', zIndex: 2, px: { xs: 2, md: 6 } }}>
           <Stack 
             direction={{ xs: 'column', md: 'row' }} 
             spacing={4} 
@@ -373,7 +393,7 @@ const HomePage = () => {
       </Box>
 
       {/* Características principales */}
-      <Container maxWidth="lg" sx={{ py: 10 }}>
+      <Container maxWidth={false} sx={{ py: 10, px: { xs: 2, md: 6 } }}>
         <Box sx={{ textAlign: 'center', mb: 8 }}>
           <Typography 
             variant="h3" 
@@ -476,9 +496,11 @@ const HomePage = () => {
       {/* Conecta, Gestiona y Crece Section */}
       <Box sx={{ 
         py: 10, 
+        px: 0,
+        width: '100%',
         background: `linear-gradient(135deg, #f8f9fa 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)` 
       }}>
-        <Container maxWidth="lg">
+        <Container maxWidth={false} sx={{ px: { xs: 2, md: 6 } }}>
           <Stack direction={{ xs: 'column', md: 'row' }} spacing={6} alignItems="center">
             <Box sx={{ 
               flex: 1,
