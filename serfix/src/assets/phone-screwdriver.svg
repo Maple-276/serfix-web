@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo con nubes -->
+  <ellipse cx="140" cy="240" rx="110" ry="15" fill="#ddd" opacity="0.5"/>
+  
+  <!-- Smartphone -->
+  <g transform="translate(150, 150) rotate(10)">
+    <rect x="-40" y="-70" width="80" height="140" rx="10" ry="10" fill="#1b2d3c" stroke="#fff" stroke-width="1"/>
+    <rect x="-35" y="-65" width="70" height="130" fill="#243c56"/>
+    <circle cx="0" cy="55" r="8" fill="#1b2d3c" stroke="#fff" stroke-width="1"/>
+    <rect x="-15" y="-68" width="30" height="3" rx="1" ry="1" fill="#1b2d3c" stroke="#fff" stroke-width="0.5"/>
+  </g>
+  
+  <!-- Destornillador rojo -->
+  <g transform="translate(120, 120) rotate(-45)">
+    <!-- Mango -->
+    <rect x="-10" y="-70" width="20" height="70" rx="5" ry="5" fill="#e74c3c" stroke="#c0392b" stroke-width="1"/>
+    
+    <!-- Detalles del mango -->
+    <rect x="-10" y="-65" width="20" height="5" fill="#c0392b"/>
+    <rect x="-10" y="-55" width="20" height="5" fill="#c0392b"/>
+    <rect x="-10" y="-45" width="20" height="5" fill="#c0392b"/>
+    <circle cx="-5" cy="-30" r="2" fill="#c0392b"/>
+    <circle cx="5" cy="-30" r="2" fill="#c0392b"/>
+    
+    <!-- Punta metálica -->
+    <rect x="-3" y="0" width="6" height="40" fill="#95a5a6" stroke="#7f8c8d" stroke-width="0.5"/>
+    <polygon points="-3,40 3,40 0,50 -3,40" fill="#7f8c8d"/>
+  </g>
+  
+  <!-- Gotas de color -->
+  <circle cx="180" cy="240" r="5" fill="#e74c3c"/>
+  <circle cx="230" cy="240" r="3" fill="#e74c3c"/>
+  <circle cx="120" cy="260" r="4" fill="#e74c3c"/>
+
+  <!-- Elementos decorativos -->
+  <circle cx="90" cy="90" r="10" fill="#fff" opacity="0.2"/>
+  <circle cx="210" cy="110" r="12" fill="#fff" opacity="0.2"/>
+  <circle cx="170" cy="70" r="8" fill="#fff" opacity="0.2"/>
+  
+  <!-- Líneas decorativas -->
+  <path d="M70,100 C100,80 120,100 130,120" fill="none" stroke="#ccc" stroke-width="1"/>
+  <path d="M180,80 C200,60 230,70 250,90" fill="none" stroke="#ccc" stroke-width="1"/>
+</svg> 

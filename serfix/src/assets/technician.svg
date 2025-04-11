@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo con tono azulado -->
+  <rect width="400" height="300" fill="#f8f9fa"/>
+  
+  <!-- Mesa de trabajo -->
+  <rect x="50" y="200" width="300" height="50" rx="2" ry="2" fill="#ddd" stroke="#ccc" stroke-width="1"/>
+  
+  <!-- Persona trabajando (silueta) -->
+  <g transform="translate(200, 150)">
+    <!-- Cuerpo y cabeza -->
+    <ellipse cx="0" cy="-60" rx="20" ry="25" fill="#3a3a3a"/>
+    <path d="M-20,-40 C-40,0 -30,50 -20,100 C-10,120 10,120 20,100 C30,50 40,0 20,-40 Z" fill="#2c3e50"/>
+    
+    <!-- Brazos trabajando -->
+    <path d="M-20,0 C-40,20 -80,30 -90,60" fill="none" stroke="#3a3a3a" stroke-width="12" stroke-linecap="round"/>
+    <path d="M20,0 C40,30 20,50 50,70" fill="none" stroke="#3a3a3a" stroke-width="12" stroke-linecap="round"/>
+    
+    <!-- Manos -->
+    <circle cx="-90" cy="60" r="8" fill="#3a3a3a"/>
+    <circle cx="50" cy="70" r="8" fill="#3a3a3a"/>
+  </g>
+  
+  <!-- Dispositivo sobre el que trabaja -->
+  <rect x="120" y="180" width="80" height="40" rx="5" ry="5" fill="#444" stroke="#333" stroke-width="1"/>
+  <rect x="130" y="190" width="60" height="20" rx="2" ry="2" fill="#666"/>
+  
+  <!-- Herramientas -->
+  <g>
+    <rect x="220" y="190" width="30" height="5" rx="1" ry="1" fill="#777"/>
+    <rect x="240" y="180" width="5" height="15" rx="1" ry="1" fill="#777"/>
+    <circle cx="260" cy="185" r="5" fill="#777"/>
+    <rect x="270" y="180" width="20" height="10" rx="1" ry="1" fill="#777"/>
+  </g>
+  
+  <!-- Elementos del entorno -->
+  <rect x="50" y="160" width="30" height="40" rx="2" ry="2" fill="#aaa"/>
+  <rect x="320" y="170" width="30" height="30" rx="2" ry="2" fill="#aaa"/>
+  
+  <!-- Luces de ambiente -->
+  <circle cx="80" cy="50" r="20" fill="#f0f0f0" opacity="0.5"/>
+  <circle cx="300" cy="60" r="30" fill="#f0f0f0" opacity="0.5"/>
+  
+  <!-- Detalles adicionales -->
+  <line x1="100" y1="200" x2="300" y2="200" stroke="#bbb" stroke-width="1"/>
+  <line x1="100" y1="210" x2="300" y2="210" stroke="#bbb" stroke-width="1"/>
+  <line x1="100" y1="220" x2="300" y2="220" stroke="#bbb" stroke-width="1"/>
+</svg> 
