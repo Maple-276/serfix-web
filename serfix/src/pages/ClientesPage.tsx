@@ -35,6 +35,7 @@ import {
   Email as EmailIcon,
   PersonOutline as PersonIcon
 } from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
 
 interface Cliente {
   id: string;
@@ -91,6 +92,7 @@ const clientesIniciales: Cliente[] = [
 ];
 
 const ClientesPage: React.FC = () => {
+  const theme = useTheme();
   const [clientes, setClientes] = useState<Cliente[]>(clientesIniciales);
   const [busqueda, setBusqueda] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
@@ -102,6 +104,12 @@ const ClientesPage: React.FC = () => {
     direccion: ''
   });
   const [tabValue, setTabValue] = useState(0);
+  const [errores, setErrores] = useState<{
+    nombre?: string;
+    correo?: string;
+    telefono?: string;
+    direccion?: string;
+  }>({});
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -182,15 +190,38 @@ const ClientesPage: React.FC = () => {
   );
 
   const validarFormulario = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const telefonoRegex = /^\d{3}-\d{3}-\d{4}$/;
+    const nuevoErrores: {
+      nombre?: string;
+      correo?: string;
+      telefono?: string;
+      direccion?: string;
+    } = {};
     
-    return (
-      nuevoCliente.nombre.trim() !== '' &&
-      emailRegex.test(nuevoCliente.correo) &&
-      telefonoRegex.test(nuevoCliente.telefono) &&
-      nuevoCliente.direccion.trim() !== ''
-    );
+    // Validar nombre
+    if (nuevoCliente.nombre.trim() === '') {
+      nuevoErrores.nombre = 'El nombre es requerido';
+    }
+    
+    // Validar correo
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nuevoCliente.correo)) {
+      nuevoErrores.correo = 'Correo inválido';
+    }
+    
+    // Validar teléfono
+    if (!/^\d{3}-\d{3}-\d{4}$/.test(nuevoCliente.telefono)) {
+      nuevoErrores.telefono = 'Formato inválido. Use: 555-123-4567';
+    }
+    
+    // Validar dirección
+    if (nuevoCliente.direccion.trim() === '') {
+      nuevoErrores.direccion = 'La dirección es requerida';
+    }
+    
+    // Actualizar estado de errores
+    setErrores(nuevoErrores);
+    
+    // Verificar si hay errores
+    return Object.keys(nuevoErrores).length === 0;
   };
 
   return (
@@ -299,9 +330,16 @@ const ClientesPage: React.FC = () => {
           </Table>
         </TableContainer>
       ) : (
-        <Grid container spacing={3}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 3, mb: 4 }}>
           {clientesFiltrados.map((cliente) => (
-            <Grid item xs={12} sm={6} md={4} key={cliente.id}>
+            <Box 
+              key={cliente.id}
+              sx={{ 
+                width: '100%', 
+                display: 'flex', 
+                flexDirection: 'column'
+              }}
+            >
               <Paper 
                 elevation={3}
                 sx={{
@@ -352,26 +390,36 @@ const ClientesPage: React.FC = () => {
                 
                 <Divider sx={{ my: 2 }} />
                 
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
+                <Box sx={{ 
+                  display: 'flex', 
+                  flexDirection: { xs: 'column', sm: 'row' }, 
+                  gap: 2, 
+                  mt: 2,
+                  mb: 2
+                }}>
+                  <Box sx={{ flex: '1' }}>
                     <Box display="flex" flexDirection="column" alignItems="center">
                       <Box display="flex" alignItems="center" mb={0.5}>
                         <BuildIcon fontSize="small" sx={{ mr: 0.5, color: 'primary.main' }} />
-                        <Typography variant="body2" color="text.secondary">Equipos</Typography>
+                        <Typography variant="subtitle2">Equipos registrados</Typography>
                       </Box>
-                      <Typography variant="h6">{cliente.equipos}</Typography>
+                      <Typography variant="h5" fontWeight="bold" color="primary.main">
+                        {cliente.equipos}
+                      </Typography>
                     </Box>
-                  </Grid>
-                  <Grid item xs={6}>
+                  </Box>
+                  <Box sx={{ flex: '1' }}>
                     <Box display="flex" flexDirection="column" alignItems="center">
                       <Box display="flex" alignItems="center" mb={0.5}>
                         <HistoryIcon fontSize="small" sx={{ mr: 0.5, color: 'secondary.main' }} />
-                        <Typography variant="body2" color="text.secondary">Reparaciones</Typography>
+                        <Typography variant="subtitle2">Reparaciones</Typography>
                       </Box>
-                      <Typography variant="h6">{cliente.reparaciones}</Typography>
+                      <Typography variant="h5" fontWeight="bold" color="secondary.main">
+                        {cliente.reparaciones}
+                      </Typography>
                     </Box>
-                  </Grid>
-                </Grid>
+                  </Box>
+                </Box>
                 
                 <Box display="flex" justifyContent="flex-end" mt={2}>
                   <IconButton 
@@ -390,9 +438,9 @@ const ClientesPage: React.FC = () => {
                   </IconButton>
                 </Box>
               </Paper>
-            </Grid>
+            </Box>
           ))}
-        </Grid>
+        </Box>
       )}
 
       {/* Dialog para crear/editar cliente */}
@@ -407,59 +455,91 @@ const ClientesPage: React.FC = () => {
         </DialogTitle>
         <DialogContent>
           <Box component="form" sx={{ mt: 2 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box>
                 <TextField
                   fullWidth
                   label="Nombre completo"
                   name="nombre"
                   value={nuevoCliente.nombre}
                   onChange={handleInputChange}
-                  required
-                  error={nuevoCliente.nombre.trim() === '' && nuevoCliente.nombre !== ''}
-                  helperText={nuevoCliente.nombre.trim() === '' && nuevoCliente.nombre !== '' ? 'El nombre es requerido' : ''}
+                  error={Boolean(errores.nombre)}
+                  helperText={errores.nombre}
+                  variant="outlined"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      '&.Mui-focused fieldset': {
+                        borderColor: theme.palette.primary.main,
+                        borderWidth: '2px'
+                      }
+                    }
+                  }}
                 />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Correo electrónico"
-                  name="correo"
-                  type="email"
-                  value={nuevoCliente.correo}
-                  onChange={handleInputChange}
-                  required
-                  error={!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nuevoCliente.correo) && nuevoCliente.correo !== ''}
-                  helperText={!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nuevoCliente.correo) && nuevoCliente.correo !== '' ? 'Correo inválido' : ''}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Teléfono (formato: 555-123-4567)"
-                  name="telefono"
-                  value={nuevoCliente.telefono}
-                  onChange={handleInputChange}
-                  required
-                  error={!/^\d{3}-\d{3}-\d{4}$/.test(nuevoCliente.telefono) && nuevoCliente.telefono !== ''}
-                  helperText={!/^\d{3}-\d{3}-\d{4}$/.test(nuevoCliente.telefono) && nuevoCliente.telefono !== '' ? 'Formato: 555-123-4567' : ''}
-                />
-              </Grid>
-              <Grid item xs={12}>
+              </Box>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
+                <Box sx={{ flex: { xs: '1', sm: '1' } }}>
+                  <TextField
+                    fullWidth
+                    label="Correo electrónico"
+                    name="correo"
+                    type="email"
+                    value={nuevoCliente.correo}
+                    onChange={handleInputChange}
+                    error={Boolean(errores.correo)}
+                    helperText={errores.correo}
+                    variant="outlined"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        '&.Mui-focused fieldset': {
+                          borderColor: theme.palette.primary.main,
+                          borderWidth: '2px'
+                        }
+                      }
+                    }}
+                  />
+                </Box>
+                <Box sx={{ flex: { xs: '1', sm: '1' } }}>
+                  <TextField
+                    fullWidth
+                    label="Teléfono (formato: 555-123-4567)"
+                    name="telefono"
+                    value={nuevoCliente.telefono}
+                    onChange={handleInputChange}
+                    error={Boolean(errores.telefono)}
+                    helperText={errores.telefono}
+                    variant="outlined"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        '&.Mui-focused fieldset': {
+                          borderColor: theme.palette.primary.main,
+                          borderWidth: '2px'
+                        }
+                      }
+                    }}
+                  />
+                </Box>
+              </Box>
+              <Box>
                 <TextField
                   fullWidth
                   label="Dirección"
                   name="direccion"
                   value={nuevoCliente.direccion}
                   onChange={handleInputChange}
-                  multiline
-                  rows={2}
-                  required
-                  error={nuevoCliente.direccion.trim() === '' && nuevoCliente.direccion !== ''}
-                  helperText={nuevoCliente.direccion.trim() === '' && nuevoCliente.direccion !== '' ? 'La dirección es requerida' : ''}
+                  error={Boolean(errores.direccion)}
+                  helperText={errores.direccion}
+                  variant="outlined"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      '&.Mui-focused fieldset': {
+                        borderColor: theme.palette.primary.main,
+                        borderWidth: '2px'
+                      }
+                    }
+                  }}
                 />
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
           </Box>
         </DialogContent>
         <DialogActions>

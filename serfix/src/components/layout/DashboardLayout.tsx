@@ -18,7 +18,8 @@ import {
   styled,
   useTheme,
   useMediaQuery,
-  Button
+  Button,
+  alpha
 } from '@mui/material';
 import { 
   Menu as MenuIcon, 
@@ -39,7 +40,8 @@ const drawerWidth = 240;
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
   background: 'linear-gradient(45deg, #d32f2f 30%, #f44336 90%)',
-  boxShadow: '0 8px 16px rgba(211, 47, 47, 0.3)',
+  boxShadow: '0 4px 20px rgba(211, 47, 47, 0.4)',
+  backdropFilter: 'blur(8px)',
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -52,41 +54,68 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
   '& .MuiDrawer-paper': {
     width: drawerWidth,
     background: '#fafafa',
+    backgroundImage: `linear-gradient(to bottom, ${alpha(theme.palette.background.paper, 0.9)}, ${alpha(theme.palette.background.default, 0.9)}), 
+                     linear-gradient(to right, ${alpha(theme.palette.primary.main, 0.05)}, transparent)`,
     boxSizing: 'border-box',
     borderRight: 'none',
-    boxShadow: '4px 0 10px rgba(0, 0, 0, 0.1)',
+    boxShadow: '4px 0 20px rgba(0, 0, 0, 0.1)',
+    backdropFilter: 'blur(10px)',
   },
 }));
 
 const MainContent = styled(Box)(({ theme }) => ({
   flexGrow: 1,
   padding: theme.spacing(3),
-  background: '#ffffff',
+  background: 'linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%)',
   minHeight: '100vh',
+  transition: theme.transitions.create('all', {
+    easing: theme.transitions.easing.easeInOut,
+    duration: theme.transitions.duration.standard,
+  }),
 }));
 
 const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
   margin: '8px 10px',
   borderRadius: '12px',
+  transition: 'all 0.3s ease',
+  position: 'relative',
+  overflow: 'hidden',
   '&.Mui-selected': {
     background: 'rgba(211, 47, 47, 0.1)',
     color: '#d32f2f',
+    fontWeight: 600,
+    boxShadow: '0 2px 8px rgba(211, 47, 47, 0.15)',
     '&:hover': {
       background: 'rgba(211, 47, 47, 0.15)',
     },
     '& .MuiListItemIcon-root': {
       color: '#d32f2f',
+    },
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      height: '100%',
+      width: '4px',
+      background: 'linear-gradient(to bottom, #d32f2f, #f44336)',
+      borderRadius: '0 2px 2px 0',
     }
   },
   '&:hover': {
     background: 'rgba(0, 0, 0, 0.04)',
-    borderRadius: '12px',
+    transform: 'translateY(-2px)',
+    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.07)',
   }
 }));
 
 const MenuButton = styled(IconButton)(({ theme }) => ({
   color: 'white',
   marginRight: theme.spacing(2),
+  transition: 'transform 0.3s ease',
+  '&:hover': {
+    transform: 'rotate(90deg)',
+  }
 }));
 
 const Logo = styled(Typography)(({ theme }) => ({
@@ -97,6 +126,7 @@ const Logo = styled(Typography)(({ theme }) => ({
   background: 'linear-gradient(90deg, #fff, #f5f5f5)',
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
+  textShadow: '0 2px 10px rgba(0,0,0,0.2)',
 }));
 
 const UserBox = styled(Box)(({ theme }) => ({
@@ -104,14 +134,23 @@ const UserBox = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   gap: theme.spacing(1),
   marginRight: theme.spacing(1),
+  padding: theme.spacing(0.5, 1),
+  borderRadius: theme.shape.borderRadius * 2,
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    background: 'rgba(255,255,255,0.1)',
+  }
 }));
 
 const LogoutButton = styled(Button)(({ theme }) => ({
   color: 'white',
   borderColor: 'rgba(255, 255, 255, 0.5)',
+  borderRadius: '20px',
+  transition: 'all 0.3s ease',
   '&:hover': {
     borderColor: 'white',
-    background: 'rgba(255, 255, 255, 0.1)',
+    background: 'rgba(255, 255, 255, 0.2)',
+    transform: 'translateY(-2px)',
   }
 }));
 

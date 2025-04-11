@@ -1,0 +1,44 @@
+import React, { useState } from 'react';
+import { Box, Fade } from '@mui/material';
+import { LoginTip } from '../components/LoginTip';
+import { FormContainer } from '../components/FormContainer';
+import { AuthPaper } from '../components/AuthPaper';
+import { AuthContainer } from '../components/AuthContainer';
+
+const LoginPage = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    // Handle form submission
+  };
+
+  return (
+    <AuthContainer>
+      <Fade in={true} timeout={1000}>
+        <AuthPaper>
+          <FormContainer>
+            <Box>
+              <LoginTip>
+                <Box>
+                  {/* Login form content */}
+                </Box>
+              </LoginTip>
+            </Box>
+          </FormContainer>
+        </AuthPaper>
+      </Fade>
+    </AuthContainer>
+  );
+};
+
+export default LoginPage;

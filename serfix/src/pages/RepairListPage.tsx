@@ -8,7 +8,6 @@ import {
   Chip,
   Container,
   Divider,
-  Grid,
   IconButton,
   Paper,
   Table,
@@ -33,10 +32,10 @@ import {
   Tabs,
   Tab,
   useMediaQuery,
-  TableSortLabel
+  TableSortLabel,
+  Avatar
 } from '@mui/material';
-import { alpha, styled, useTheme } from '@mui/material/styles';
-import { 
+import {
   Add as AddIcon, 
   Visibility as VisibilityIcon,
   Search as SearchIcon,
@@ -56,10 +55,13 @@ import {
   HighlightOff as CancelIcon,
   DoNotDisturb as PendingIcon,
   Settings as SettingsIcon,
-  Sort as SortIcon
+  Sort as SortIcon,
+  CalendarToday as CalendarIcon,
+  Money as MoneyIcon
 } from '@mui/icons-material';
 import { useRepairs } from '../contexts/RepairsContext';
 import { RepairRequest, RepairStatus, DeviceType } from '../types/repair';
+import { alpha, styled, useTheme } from '@mui/material/styles';
 
 // Componentes estilizados
 const HeaderRow = styled(Box)(({ theme }) => ({
@@ -306,6 +308,7 @@ const RepairListPage = () => {
   const pendingCount = repairs.filter(repair => repair.status === 'pendiente').length;
   const inProgressCount = repairs.filter(repair => repair.status === 'en_progreso').length;
   const completedCount = repairs.filter(repair => repair.status === 'completada').length;
+  const canceledCount = repairs.filter(repair => repair.status === 'cancelada').length;
 
   // Reparaciones ordenadas y paginadas
   const sortedAndPaginatedRepairs = useMemo(() => {
@@ -403,98 +406,124 @@ const RepairListPage = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
-      <HeaderRow>
-        <Box>
-          <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
-            Reparaciones
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Gestiona todas las solicitudes de reparación
-          </Typography>
-        </Box>
+      <Box 
+        sx={{
+          p: { xs: 2, md: 3 },
+          mb: 4,
+          borderRadius: 3,
+          background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.05)} 0%, ${alpha(theme.palette.primary.light, 0.1)} 100%)`,
+          border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+        }}
+      >
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
+          <Box sx={{ flex: { xs: '1 1 100%', md: '7 1 0%' } }}>
+            <Typography 
+              variant="h4" 
+              component="h1" 
+              fontWeight="bold" 
+              gutterBottom
+              sx={{ 
+                background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                mb: 1,
+              }}
+            >
+              Centro de Reparaciones
+            </Typography>
+            <Typography variant="body1" color="text.secondary" paragraph>
+              Gestiona todas las solicitudes de reparación de manera eficiente y mantén el control de cada proyecto.
+        </Typography>
         <Button
           variant="contained"
           color="primary"
           startIcon={<AddIcon />}
           onClick={handleNewRepair}
-          sx={{ py: 1.2, px: 2, fontWeight: 500 }}
+              sx={{ 
+                py: 1.2, 
+                px: 3, 
+                fontWeight: 600, 
+                borderRadius: 2,
+                boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.4)}`,
+              }}
         >
           Nueva Reparación
         </Button>
-      </HeaderRow>
+      </Box>
+          <Box sx={{ flex: { xs: '1 1 100%', md: '5 1 0%' } }}>
+            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: { xs: 'center', md: 'flex-end' } }}>
+              <Card 
+                sx={{ 
+                  width: { xs: '45%', sm: 140 }, 
+                  height: 110, 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  background: `linear-gradient(135deg, ${alpha(theme.palette.warning.light, 0.15)} 0%, ${alpha(theme.palette.warning.main, 0.15)} 100%)`,
+                  border: `1px solid ${alpha(theme.palette.warning.main, 0.2)}`,
+                  borderRadius: 3,
+                  transition: 'transform 0.3s ease-in-out',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    transform: 'translateY(-5px)'
+                  }
+                }}
+                onClick={() => handleStatusFilterChange('pendiente')}
+              >
+                <Typography variant="h4" fontWeight="bold" color="warning.main">{pendingCount}</Typography>
+                <Typography variant="body2" color="text.secondary">Pendientes</Typography>
+              </Card>
+              <Card 
+                sx={{ 
+                  width: { xs: '45%', sm: 140 }, 
+                  height: 110, 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  background: `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.15)} 0%, ${alpha(theme.palette.primary.main, 0.15)} 100%)`,
+                  border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                  borderRadius: 3,
+                  transition: 'transform 0.3s ease-in-out',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    transform: 'translateY(-5px)'
+                  }
+                }}
+                onClick={() => handleStatusFilterChange('en_progreso')}
+              >
+                <Typography variant="h4" fontWeight="bold" color="primary.main">{inProgressCount}</Typography>
+                <Typography variant="body2" color="text.secondary">En progreso</Typography>
+              </Card>
+              <Card 
+                sx={{ 
+                  width: { xs: '45%', sm: 140 }, 
+                  height: 110, 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  background: `linear-gradient(135deg, ${alpha(theme.palette.success.light, 0.15)} 0%, ${alpha(theme.palette.success.main, 0.15)} 100%)`,
+                  border: `1px solid ${alpha(theme.palette.success.main, 0.2)}`,
+                  borderRadius: 3,
+                  transition: 'transform 0.3s ease-in-out',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    transform: 'translateY(-5px)'
+                  }
+                }}
+                onClick={() => handleStatusFilterChange('completada')}
+              >
+                <Typography variant="h4" fontWeight="bold" color="success.main">{completedCount}</Typography>
+                <Typography variant="body2" color="text.secondary">Completadas</Typography>
+              </Card>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
 
       <Box sx={{ mb: 4 }}>
-        <Tabs 
-          value={tabValue} 
-          onChange={handleTabChange}
-          variant={isSmallScreen ? "scrollable" : "standard"}
-          scrollButtons={isSmallScreen ? "auto" : undefined}
-          sx={{ 
-            mb: 3,
-            '& .MuiTab-root': {
-              minWidth: 'auto',
-              px: 3,
-            }
-          }}
-        >
-          <Tab 
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <span>Todas</span>
-                <Chip size="small" label={repairs.length} sx={{ height: 20 }} />
-              </Box>
-            }
-          />
-          <Tab 
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <span>Pendientes</span>
-                <Chip 
-                  size="small" 
-                  label={pendingCount} 
-                  sx={{ 
-                    height: 20, 
-                    bgcolor: alpha(theme.palette.warning.main, 0.1), 
-                    color: theme.palette.warning.main 
-                  }} 
-                />
-              </Box>
-            }
-          />
-          <Tab 
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <span>En progreso</span>
-                <Chip 
-                  size="small" 
-                  label={inProgressCount} 
-                  sx={{ 
-                    height: 20, 
-                    bgcolor: alpha(theme.palette.primary.main, 0.1), 
-                    color: theme.palette.primary.main 
-                  }} 
-                />
-              </Box>
-            }
-          />
-          <Tab 
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <span>Completadas</span>
-                <Chip 
-                  size="small" 
-                  label={completedCount} 
-                  sx={{ 
-                    height: 20, 
-                    bgcolor: alpha(theme.palette.success.main, 0.1), 
-                    color: theme.palette.success.main 
-                  }} 
-                />
-              </Box>
-            }
-          />
-        </Tabs>
-
         <Box sx={{ 
           display: 'flex', 
           flexDirection: isSmallScreen ? 'column' : 'row',
@@ -510,7 +539,11 @@ const RepairListPage = () => {
             size="small"
             sx={{ 
               width: isSmallScreen ? '100%' : '60%',
-              flexGrow: 1
+              flexGrow: 1,
+              '& .MuiOutlinedInput-root': {
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+                borderRadius: 2
+              }
             }}
             InputProps={{
               startAdornment: (
@@ -529,8 +562,10 @@ const RepairListPage = () => {
                 size="small"
                 onClick={toggleShowFilters}
                 sx={{ 
+                  borderRadius: 2,
                   borderColor: showFilters ? theme.palette.primary.main : undefined,
                   color: showFilters ? theme.palette.primary.main : undefined,
+                  fontWeight: 600
                 }}
                 startIcon={<FilterIcon />}
               >
@@ -539,35 +574,133 @@ const RepairListPage = () => {
             </Tooltip>
             
             <Tooltip title={isGridView ? "Vista de tabla" : "Vista de cuadrícula"}>
-              <IconButton 
-                size="small" 
+              <Button 
+                variant="outlined"
+                color="inherit"
+                size="small"
                 onClick={toggleGridView}
                 sx={{ 
-                  border: `1px solid ${alpha(theme.palette.text.primary, 0.1)}`,
-                  bgcolor: theme.palette.background.paper
+                  borderRadius: 2,
+                  fontWeight: 600,
+                  minWidth: 'auto',
+                  px: 1.5
                 }}
               >
                 {isGridView ? <ListIcon /> : <GridIcon />}
-              </IconButton>
+              </Button>
             </Tooltip>
           </Box>
         </Box>
+        
+        <Tabs 
+          value={tabValue} 
+          onChange={handleTabChange}
+          variant={isSmallScreen ? "scrollable" : "standard"}
+          scrollButtons={isSmallScreen ? "auto" : undefined}
+          sx={{ 
+            mb: 3,
+            '& .MuiTab-root': {
+              minWidth: 'auto',
+              px: 3,
+              borderRadius: 2,
+              mx: 0.5,
+              fontWeight: 600,
+              color: theme.palette.text.secondary,
+              '&.Mui-selected': {
+                color: theme.palette.primary.main,
+              }
+            },
+            '& .MuiTabs-indicator': {
+              height: 3,
+              borderRadius: 2
+            }
+          }}
+        >
+          <Tab 
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <span>Todas</span>
+                <Chip 
+                  size="small" 
+                  label={repairs.length} 
+                  sx={{ 
+                    height: 22, 
+                    fontWeight: 'bold',
+                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                    color: theme.palette.primary.main
+                  }} 
+                />
+              </Box>
+            }
+          />
+          <Tab 
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <span>Pendientes</span>
+                <Chip 
+                  size="small" 
+                  label={pendingCount} 
+                  sx={{ 
+                    height: 22, 
+                    fontWeight: 'bold',
+                    bgcolor: alpha(theme.palette.warning.main, 0.1), 
+                    color: theme.palette.warning.main 
+                  }} 
+                />
+              </Box>
+            }
+          />
+          <Tab 
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <span>En progreso</span>
+                <Chip 
+                  size="small" 
+                  label={inProgressCount} 
+                  sx={{ 
+                    height: 22, 
+                    fontWeight: 'bold',
+                    bgcolor: alpha(theme.palette.primary.main, 0.1), 
+                    color: theme.palette.primary.main 
+                  }} 
+                />
+              </Box>
+            }
+          />
+          <Tab 
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <span>Completadas</span>
+                <Chip 
+                  size="small" 
+                  label={completedCount} 
+                  sx={{ 
+                    height: 22, 
+                    fontWeight: 'bold',
+                    bgcolor: alpha(theme.palette.success.main, 0.1), 
+                    color: theme.palette.success.main 
+                  }} 
+                />
+              </Box>
+            }
+          />
+        </Tabs>
         
         <Collapse in={showFilters}>
           <Paper
             elevation={0}
             sx={{
-              p: 2,
+              p: { xs: 2, md: 3 },
               mb: 3,
-              borderRadius: 2,
+              borderRadius: 3,
               border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-              bgcolor: alpha(theme.palette.background.paper, 0.7),
+              background: alpha(theme.palette.background.paper, 0.7),
+              backdropFilter: 'blur(8px)',
             }}
           >
-            <Typography variant="subtitle2" fontWeight={600} gutterBottom sx={{ mb: 2 }}>
-              Filtrar por:
+            <Typography variant="subtitle1" fontWeight={600} gutterBottom sx={{ mb: 2 }}>
+              Filtros avanzados
             </Typography>
-            
             <FiltersContainer>
               <Typography variant="body2" fontWeight={500} sx={{ mr: 1 }}>
                 Estado:
@@ -681,7 +814,7 @@ const RepairListPage = () => {
             {searchQuery || statusFilter !== 'todas' || deviceTypeFilter !== 'todas' 
               ? 'Intenta modificar los criterios de búsqueda o los filtros aplicados'
               : 'Comienza registrando una nueva solicitud de reparación para tus clientes.'}
-          </Typography>
+            </Typography>
           {searchQuery || statusFilter !== 'todas' || deviceTypeFilter !== 'todas' ? (
             <Button 
               variant="outlined" 
@@ -710,68 +843,170 @@ const RepairListPage = () => {
         <Box sx={{ mb: 2 }}>
           <RepairCardGrid>
             {sortedAndPaginatedRepairs.map((repair) => (
-              <RepairCard key={repair.id} elevation={1}>
-                <Box sx={{ position: 'relative' }}>
-                  <CardContent sx={{ pb: 1 }}>
+              <RepairCard 
+                key={repair.id} 
+                elevation={2}
+                sx={{
+                  borderRadius: 3,
+                  overflow: 'hidden',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'translateY(-8px)',
+                    boxShadow: `0 16px 30px ${alpha(theme.palette.primary.main, 0.1)}`
+                  }
+                }}
+              >
+                <Box 
+                  sx={{ 
+                    borderBottom: `4px solid ${
+                      repair.status === 'pendiente'
+                        ? theme.palette.warning.main
+                        : repair.status === 'en_progreso'
+                          ? theme.palette.primary.main
+                          : repair.status === 'completada'
+                            ? theme.palette.success.main
+                            : repair.status === 'cancelada'
+                              ? theme.palette.error.main
+                              : theme.palette.primary.main
+                    }`,
+                    position: 'relative',
+                    p: 0,
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      background: `linear-gradient(to bottom, ${
+                        repair.status === 'pendiente'
+                          ? alpha(theme.palette.warning.main, 0.05)
+                          : repair.status === 'en_progreso'
+                            ? alpha(theme.palette.primary.main, 0.05)
+                            : repair.status === 'completada'
+                              ? alpha(theme.palette.success.main, 0.05)
+                              : repair.status === 'cancelada'
+                                ? alpha(theme.palette.error.main, 0.05)
+                                : alpha(theme.palette.primary.main, 0.05)
+                      }, transparent)`,
+                      zIndex: 0
+                    }
+                  }}
+                >
+                  <CardContent sx={{ pb: 2, pt: 2 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                       <Chip
                         label={getStatusLabel(repair.status)}
                         color={getStatusColor(repair.status)}
                         size="small"
                         icon={getStatusIcon(repair.status)}
-                        sx={{ fontWeight: 500 }}
+                        sx={{ 
+                          fontWeight: 600,
+                          borderRadius: '8px',
+                          px: 1
+                        }}
                       />
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography 
+                        variant="caption" 
+                        sx={{ 
+                          color: 'text.secondary',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 0.5
+                        }}
+                      >
+                        <CalendarIcon fontSize="inherit" />
                         {formatDate(repair.entryDate)}
                       </Typography>
                     </Box>
                     
-                    <Typography variant="subtitle1" fontWeight={600} noWrap>
+                    <Typography variant="h6" fontWeight={600} noWrap>
                       {repair.clientName}
                     </Typography>
                     
-                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, color: 'text.secondary' }}>
-                      {getDeviceTypeIcon(repair.deviceType)}
-                      <Typography variant="body2" sx={{ ml: 1 }}>
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      mt: 1.5, 
+                      p: 1,
+                      borderRadius: 2,
+                      bgcolor: alpha(theme.palette.background.default, 0.5)
+                    }}>
+                      <Avatar 
+                        sx={{ 
+                          bgcolor: alpha(theme.palette.primary.main, 0.1),
+                          color: theme.palette.primary.main,
+                          width: 32,
+                          height: 32,
+                          mr: 1
+                        }}
+                      >
+                        {getDeviceTypeIcon(repair.deviceType)}
+                      </Avatar>
+                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
                         {repair.deviceType}
                         {repair.brand ? ` - ${repair.brand}` : ''}
                         {repair.model ? ` (${repair.model})` : ''}
                       </Typography>
                     </Box>
                     
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 2, mb: 1, height: 40, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                    <Typography 
+                      variant="body2" 
+                      color="text.secondary" 
+                      sx={{ 
+                        mt: 2, 
+                        mb: 1, 
+                        minHeight: 60, 
+                        overflow: 'hidden', 
+                        textOverflow: 'ellipsis', 
+                        display: '-webkit-box', 
+                        WebkitLineClamp: 3, 
+                        WebkitBoxOrient: 'vertical',
+                        bgcolor: alpha(theme.palette.background.default, 0.3),
+                        p: 1.5,
+                        borderRadius: 2
+                      }}
+                    >
                       {repair.problemDescription}
                     </Typography>
                   </CardContent>
                 </Box>
                 
-                <Box sx={{ mt: 'auto' }}>
-                  <Divider />
+                <Box sx={{ mt: 'auto', bgcolor: alpha(theme.palette.background.default, 0.3) }}>
                   <CardContent sx={{ py: 1.5, px: 2 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <Box>
                         {repair.estimatedCost && (
-                          <Typography variant="subtitle2" fontWeight={600} color="primary">
+                          <Typography 
+                            variant="subtitle1" 
+                            fontWeight={700} 
+                            sx={{
+                              color: theme.palette.primary.main,
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 0.5
+                            }}
+                          >
+                            <MoneyIcon fontSize="small" />
                             ${repair.estimatedCost}
                           </Typography>
                         )}
                       </Box>
-                      <Box>
-                        <Tooltip title="Ver detalles">
-                          <IconButton 
-                            size="small"
-                            onClick={() => handleViewDetail(repair.id)}
-                            sx={{ 
-                              color: theme.palette.primary.main,
-                              bgcolor: alpha(theme.palette.primary.main, 0.08),
-                            }}
-                          >
-                            <VisibilityIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                      </Box>
+                      <Button
+                        variant="contained"
+                        size="small"
+                        onClick={() => handleViewDetail(repair.id)}
+                        startIcon={<VisibilityIcon fontSize="small" />}
+                        sx={{ 
+                          borderRadius: 2,
+                          boxShadow: `0 4px 8px ${alpha(theme.palette.primary.main, 0.2)}`,
+                          px: 2
+                        }}
+                      >
+                        Ver
+                      </Button>
                     </Box>
-                  </CardContent>
+          </CardContent>
                 </Box>
               </RepairCard>
             ))}
@@ -787,7 +1022,14 @@ const RepairListPage = () => {
             rowsPerPageOptions={[10, 25, 50]}
             labelRowsPerPage="Filas por página:"
             labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
-            sx={{ mt: 2 }}
+            sx={{ 
+              mt: 3,
+              bgcolor: alpha(theme.palette.primary.main, 0.03),
+              borderRadius: 2,
+              '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
+                fontWeight: 500
+              }
+            }}
           />
         </Box>
       ) : (
@@ -797,13 +1039,14 @@ const RepairListPage = () => {
             overflow: 'hidden',
             border: `1px solid ${alpha(theme.palette.divider, 0.7)}`,
             borderRadius: theme.shape.borderRadius * 1.5,
+            boxShadow: `0 4px 20px ${alpha(theme.palette.common.black, 0.05)}`,
           }}
         >
           <TableContainer>
-            <Table sx={{ minWidth: 650 }} aria-label="tabla de reparaciones">
-              <TableHead>
-                <TableRow>
-                  <TableCell>
+          <Table sx={{ minWidth: 650 }} aria-label="tabla de reparaciones">
+              <TableHead sx={{ bgcolor: alpha(theme.palette.primary.main, 0.03) }}>
+              <TableRow>
+                  <TableCell sx={{ fontWeight: 600 }}>
                     <TableSortLabel
                       active={orderBy === 'clientName'}
                       direction={orderBy === 'clientName' ? order : 'asc'}
@@ -812,7 +1055,7 @@ const RepairListPage = () => {
                       Cliente
                     </TableSortLabel>
                   </TableCell>
-                  <DeviceTypeCell>
+                  <DeviceTypeCell sx={{ fontWeight: 600 }}>
                     <TableSortLabel
                       active={orderBy === 'deviceType'}
                       direction={orderBy === 'deviceType' ? order : 'asc'}
@@ -821,7 +1064,7 @@ const RepairListPage = () => {
                       Dispositivo
                     </TableSortLabel>
                   </DeviceTypeCell>
-                  <TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>
                     <TableSortLabel
                       active={orderBy === 'entryDate'}
                       direction={orderBy === 'entryDate' ? order : 'asc'}
@@ -830,7 +1073,7 @@ const RepairListPage = () => {
                       Fecha de Ingreso
                     </TableSortLabel>
                   </TableCell>
-                  <StatusCell>
+                  <StatusCell sx={{ fontWeight: 600 }}>
                     <TableSortLabel
                       active={orderBy === 'status'}
                       direction={orderBy === 'status' ? order : 'asc'}
@@ -839,31 +1082,41 @@ const RepairListPage = () => {
                       Estado
                     </TableSortLabel>
                   </StatusCell>
-                  <TableCell align="right">Acciones</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
+                  <TableCell align="right" sx={{ fontWeight: 600 }}>Acciones</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
                 {sortedAndPaginatedRepairs.map((repair) => (
-                  <TableRow
-                    key={repair.id}
+                <TableRow
+                  key={repair.id}
                     sx={{ 
                       '&:hover': { 
                         backgroundColor: alpha(theme.palette.primary.main, 0.04),
-                      } 
+                      },
+                      cursor: 'pointer'
                     }}
+                    onClick={() => handleViewDetail(repair.id)}
                   >
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Typography variant="body2" fontWeight={500}>
+                        <Typography variant="body2" fontWeight={600}>
                           {repair.clientName}
                         </Typography>
                       </Box>
-                    </TableCell>
+                  </TableCell>
                     <DeviceTypeCell>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Box sx={{ mr: 1, color: 'text.secondary' }}>
+                        <Avatar
+                          sx={{ 
+                            width: 28, 
+                            height: 28, 
+                            mr: 1,
+                            bgcolor: alpha(theme.palette.primary.main, 0.1),
+                            color: theme.palette.primary.main
+                          }}
+                        >
                           {getDeviceTypeIcon(repair.deviceType)}
-                        </Box>
+                        </Avatar>
                         <Typography variant="body2">
                           {repair.deviceType}
                           {repair.brand ? ` - ${repair.brand}` : ''}
@@ -871,46 +1124,70 @@ const RepairListPage = () => {
                         </Typography>
                       </Box>
                     </DeviceTypeCell>
-                    <TableCell>
-                      <Typography variant="body2">
+                  <TableCell>
+                      <Typography 
+                        variant="body2"
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 0.5
+                        }}
+                      >
+                        <CalendarIcon fontSize="small" />
                         {formatDate(repair.entryDate)}
                       </Typography>
                     </TableCell>
                     <StatusCell>
-                      <Chip 
-                        label={getStatusLabel(repair.status)} 
-                        color={getStatusColor(repair.status)} 
-                        size="small"
+                    <Chip 
+                      label={getStatusLabel(repair.status)} 
+                      color={getStatusColor(repair.status)} 
+                      size="small"
                         icon={getStatusIcon(repair.status)}
-                        sx={{ fontWeight: 500 }}
+                        sx={{ 
+                          fontWeight: 600,
+                          borderRadius: '8px',
+                          px: 1
+                        }}
                       />
                     </StatusCell>
-                    <TableCell align="right">
+                  <TableCell align="right">
                       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-                        <ViewButton
+                        <Button
+                          variant="contained"
                           size="small"
-                          onClick={() => handleViewDetail(repair.id)}
-                          title="Ver detalle"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleViewDetail(repair.id);
+                          }}
+                          startIcon={<VisibilityIcon fontSize="small" />}
+                          sx={{ 
+                            borderRadius: 2,
+                            boxShadow: `0 4px 8px ${alpha(theme.palette.primary.main, 0.2)}`,
+                          }}
                         >
-                          <VisibilityIcon fontSize="small" />
-                        </ViewButton>
+                          Ver
+                        </Button>
                         
-                        <IconButton
+                    <IconButton
                           size="small"
-                          onClick={(e) => handleMenuOpen(e, repair.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMenuOpen(e, repair.id);
+                          }}
                           sx={{ 
                             border: `1px solid ${alpha(theme.palette.divider, 0.7)}`,
+                            bgcolor: alpha(theme.palette.background.paper, 0.7),
                           }}
                         >
                           <MoreVertIcon fontSize="small" />
-                        </IconButton>
+                    </IconButton>
                       </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
           
           <TablePagination
             component="div"

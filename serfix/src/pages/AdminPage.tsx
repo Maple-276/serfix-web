@@ -4,7 +4,6 @@ import {
   Card, 
   CardContent, 
   CardActions, 
-  Grid, 
   Typography, 
   Button, 
   Divider, 
@@ -28,16 +27,32 @@ import {
   IconButton,
   Tabs,
   Tab,
-  Chip
+  Chip,
+  LinearProgress,
+  List,
+  ListItem,
+  ListItemText,
+  Avatar,
+  Badge,
+  Tooltip,
+  SelectChangeEvent,
+  TablePagination
 } from '@mui/material';
 import {
   Backup,
   Refresh,
   Storage,
   Download,
-  Delete as DeleteIcon
+  Delete as DeleteIcon,
+  PersonAdd as PersonAddIcon,
+  Settings as SettingsIcon,
+  Backup as BackupIcon,
+  BarChart as BarChartIcon,
+  Search as SearchIcon,
+  Edit as EditIcon
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
+import { alpha } from '@mui/material/styles';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -112,10 +127,22 @@ const AdminPage: React.FC = () => {
     setDeleteConfirmOpen(false);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-    const name = e.target.name as string;
-    const value = e.target.value as string;
-    setNewUser(prev => ({ ...prev, [name]: value }));
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+    const { name, value } = e.target;
+    if (name) {
+      setNewUser({
+        ...newUser,
+        [name]: value
+      });
+    }
+  };
+
+  const handleSelectChange = (e: SelectChangeEvent<string>) => {
+    const { name, value } = e.target;
+    setNewUser({
+      ...newUser,
+      [name]: value
+    });
   };
 
   const handleSaveUser = () => {
@@ -129,6 +156,18 @@ const AdminPage: React.FC = () => {
     console.log('Eliminando usuario:', selectedUser);
     handleCloseDeleteConfirm();
   };
+
+  const handleEditUser = (user: User) => {
+    setSelectedUser(user);
+    setNewUser(user);
+    setOpenDialog(true);
+  };
+
+  const users: User[] = [
+    { name: 'Administrador Principal', email: 'admin@serfix.com', role: 'admin', status: 'activo' },
+    { name: 'Técnico Uno', email: 'tecnico1@serfix.com', role: 'tecnico', status: 'activo' },
+    { name: 'Recepcionista', email: 'recepcion@serfix.com', role: 'recepcion', status: 'inactivo' }
+  ];
 
   return (
     <Box sx={{ p: 3 }}>
@@ -167,14 +206,253 @@ const AdminPage: React.FC = () => {
             Gestión de Usuarios
           </Typography>
           
-          <Box sx={{ mb: 3, display: 'flex', justifyContent: 'flex-end' }}>
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: { xs: 'column', md: 'row' }, 
+            gap: 3,
+            mb: 4
+          }}>
+            <Box sx={{ 
+              flex: { xs: '1 1 100%', md: '4 1 0%' }, 
+              display: 'flex', 
+              flexDirection: 'column'
+            }}>
+              <Card sx={{
+                borderRadius: 2,
+                boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.1)}`,
+                border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                '&:hover': {
+                  boxShadow: `0 12px 28px ${alpha(theme.palette.primary.main, 0.15)}`,
+                  transform: 'translateY(-4px)'
+                }
+              }}>
+                <CardContent>
+                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                    Visión general
+                  </Typography>
+                  <Box sx={{ mb: 2 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                      <Typography variant="body2" color="text.secondary">Usuarios activos</Typography>
+                      <Typography variant="body2" fontWeight="bold">24 / 30</Typography>
+                    </Box>
+                    <LinearProgress variant="determinate" value={80} color="primary" sx={{ height: 8, borderRadius: 4 }} />
+                  </Box>
+                  <Box sx={{ mb: 3 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                      <Typography variant="body2" color="text.secondary">Espacio de almacenamiento</Typography>
+                      <Typography variant="body2" fontWeight="bold">4.2 GB / 10 GB</Typography>
+                    </Box>
+                    <LinearProgress variant="determinate" value={42} color="secondary" sx={{ height: 8, borderRadius: 4 }} />
+                  </Box>
+                  <Divider sx={{ my: 2 }} />
+                  <Typography variant="subtitle2" sx={{ mb: 1 }}>Roles de usuarios</Typography>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                    <Chip 
+                      label="Administradores (3)" 
+                      size="small" 
+                      color="primary" 
+                      variant="outlined" 
+                    />
+                    <Chip 
+                      label="Técnicos (12)" 
+                      size="small" 
+                      color="secondary" 
+                      variant="outlined" 
+                    />
+                    <Chip 
+                      label="Recepcionistas (9)" 
+                      size="small" 
+                      color="info" 
+                      variant="outlined" 
+                    />
+                  </Box>
+                </CardContent>
+              </Card>
+            </Box>
+            
+            <Box sx={{ 
+              flex: { xs: '1 1 100%', md: '8 1 0%' }, 
+              display: 'flex', 
+              flexDirection: 'column' 
+            }}>
+              <Card sx={{
+                borderRadius: 2,
+                boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.1)}`,
+                border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+                height: '100%'
+              }}>
+                <CardContent>
+                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                    Acciones rápidas
+                  </Typography>
+                  
+                  <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 2, mt: 2 }}>
             <Button
-              variant="contained"
+                      fullWidth 
+                      variant="outlined" 
               color="primary"
+                      startIcon={<PersonAddIcon />} 
               onClick={handleOpenDialog}
-            >
-              Nuevo Usuario
+                      sx={{ 
+                        py: 1.5, 
+                        borderRadius: 2,
+                        fontWeight: 500,
+                        borderWidth: '2px',
+                        '&:hover': {
+                          borderWidth: '2px',
+                          backgroundColor: alpha(theme.palette.primary.main, 0.08)
+                        }
+                      }}
+                    >
+                      Añadir usuario
+                    </Button>
+                    <Button 
+                      fullWidth 
+                      variant="outlined" 
+                      color="info" 
+                      startIcon={<SettingsIcon />}
+                      sx={{ 
+                        py: 1.5, 
+                        borderRadius: 2,
+                        fontWeight: 500,
+                        borderWidth: '2px',
+                        '&:hover': {
+                          borderWidth: '2px',
+                          backgroundColor: alpha(theme.palette.info.main, 0.08)
+                        }
+                      }}
+                    >
+                      Configuración avanzada
+                    </Button>
+                    <Button 
+                      fullWidth 
+                      variant="outlined" 
+                      color="success" 
+                      startIcon={<BackupIcon />}
+                      sx={{ 
+                        py: 1.5, 
+                        borderRadius: 2,
+                        fontWeight: 500,
+                        borderWidth: '2px',
+                        '&:hover': {
+                          borderWidth: '2px',
+                          backgroundColor: alpha(theme.palette.success.main, 0.08)
+                        }
+                      }}
+                    >
+                      Realizar copia de seguridad
+                    </Button>
+                    <Button 
+                      fullWidth 
+                      variant="outlined" 
+                      color="warning" 
+                      startIcon={<BarChartIcon />}
+                      sx={{ 
+                        py: 1.5, 
+                        borderRadius: 2,
+                        fontWeight: 500,
+                        borderWidth: '2px',
+                        '&:hover': {
+                          borderWidth: '2px',
+                          backgroundColor: alpha(theme.palette.warning.main, 0.08)
+                        }
+                      }}
+                    >
+                      Reportes de sistema
             </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Box>
+          </Box>
+          
+          <Box sx={{ mb: 3 }}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2, alignItems: 'center' }}>
+              <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 0%' } }}>
+                <TextField
+                  select
+                  fullWidth
+                  label="Filtrar por rol"
+                  variant="outlined"
+                  defaultValue="todos"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      '&.Mui-focused fieldset': {
+                        borderColor: theme.palette.primary.main,
+                        borderWidth: '2px'
+                      }
+                    }
+                  }}
+                >
+                  <MenuItem value="todos">Todos los roles</MenuItem>
+                  <MenuItem value="admin">Administrador</MenuItem>
+                  <MenuItem value="tecnico">Técnico</MenuItem>
+                  <MenuItem value="recepcion">Recepcionista</MenuItem>
+                </TextField>
+              </Box>
+              <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 0%' } }}>
+                <TextField
+                  select
+                  fullWidth
+                  label="Filtrar por estado"
+                  variant="outlined"
+                  defaultValue="todos"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      '&.Mui-focused fieldset': {
+                        borderColor: theme.palette.primary.main,
+                        borderWidth: '2px'
+                      }
+                    }
+                  }}
+                >
+                  <MenuItem value="todos">Todos los estados</MenuItem>
+                  <MenuItem value="activo">Activo</MenuItem>
+                  <MenuItem value="inactivo">Inactivo</MenuItem>
+                  <MenuItem value="bloqueado">Bloqueado</MenuItem>
+                </TextField>
+              </Box>
+              <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 0%' } }}>
+                <TextField
+                  fullWidth
+                  label="Buscar usuario"
+                  variant="outlined"
+                  placeholder="Nombre, correo o rol..."
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      '&.Mui-focused fieldset': {
+                        borderColor: theme.palette.primary.main,
+                        borderWidth: '2px'
+                      }
+                    }
+                  }}
+                />
+              </Box>
+              <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 0%' } }}>
+                <Button 
+                  fullWidth 
+                  variant="contained" 
+                  color="primary" 
+                  startIcon={<SearchIcon />}
+                  sx={{ 
+                    py: 1.7, 
+                    borderRadius: 2,
+                    fontWeight: 600,
+                    boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.4)}`,
+                    '&:hover': {
+                      boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.6)}`,
+                      transform: 'translateY(-2px)'
+                    }
+                  }}
+                >
+                  Buscar
+                </Button>
+              </Box>
+            </Box>
           </Box>
           
           <TableContainer component={Paper} variant="outlined">
@@ -240,405 +518,683 @@ const AdminPage: React.FC = () => {
         </TabPanel>
         
         <TabPanel value={tabValue} index={1}>
-          <Typography variant="h6" gutterBottom sx={{ 
-            borderBottom: `2px solid ${theme.palette.primary.main}`,
-            pb: 1,
-            mb: 3
-          }}>
-            Información del Sistema
+          <Paper sx={{ p: 3, mb: 4, borderRadius: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Configuración del Sistema
           </Typography>
           
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={4}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
+              <Box sx={{ flex: { xs: '1 1 100%', md: '6 1 0%' } }}>
               <Card>
                 <CardContent>
                   <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                    Estado del Sistema
+                      Ajustes generales
                   </Typography>
-                  
-                  <Box sx={{ mb: 2 }}>
-                    <Typography variant="body2" component="div" sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span>Espacio en disco:</span>
-                      <span>2.4 GB / 20 GB</span>
+                    <Typography variant="body2" color="text.secondary" paragraph>
+                      Configura los ajustes básicos del sistema SERFIX
                     </Typography>
-                  </Box>
-                  <Divider sx={{ my: 1 }} />
-                  <Box sx={{ mb: 2 }}>
-                    <Typography variant="body2" component="div" sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span>Memoria:</span>
-                      <span>1.2 GB / 4 GB</span>
-                    </Typography>
-                  </Box>
-                  <Divider sx={{ my: 1 }} />
-                  <Box sx={{ mb: 2 }}>
-                    <Typography variant="body2" component="div" sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span>Conexiones:</span>
-                      <span>12 activas</span>
-                    </Typography>
-                  </Box>
-                  <Divider sx={{ my: 1 }} />
-                  <Box sx={{ mb: 2 }}>
-                    <Typography variant="body2" component="div" sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span>Último Backup:</span>
-                      <span>10/11/2023</span>
-                    </Typography>
-                  </Box>
-                </CardContent>
-                <CardActions>
-                  <Button size="small" color="primary">
-                    Ver Detalles
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-            
-            <Grid item xs={12} md={8}>
-              <Card>
-                <CardContent>
-                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                    Acciones de Base de Datos
-                  </Typography>
-                  <Grid container spacing={2} sx={{ mt: 1 }}>
-                    <Grid item xs={12} md={6}>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 2 }}>
                       <Button 
                         fullWidth 
                         variant="outlined" 
                         color="primary"
-                        startIcon={<Backup />}
+                        startIcon={<SettingsIcon />}
+                        sx={{ 
+                          py: 1.5, 
+                          borderRadius: 2,
+                          fontWeight: 500,
+                          borderWidth: '2px',
+                          '&:hover': {
+                            borderWidth: '2px',
+                            backgroundColor: alpha(theme.palette.primary.main, 0.08)
+                          }
+                        }}
                       >
-                        Realizar Backup
+                        Ajustes generales
                       </Button>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
                       <Button 
                         fullWidth 
                         variant="outlined" 
                         color="secondary"
-                        startIcon={<Refresh />}
+                        startIcon={<SettingsIcon />}
+                        sx={{ 
+                          py: 1.5, 
+                          borderRadius: 2,
+                          fontWeight: 500,
+                          borderWidth: '2px',
+                          '&:hover': {
+                            borderWidth: '2px',
+                            backgroundColor: alpha(theme.palette.secondary.main, 0.08)
+                          }
+                        }}
                       >
-                        Optimizar Tablas
+                        Personalización
                       </Button>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
                       <Button 
                         fullWidth 
                         variant="outlined" 
                         color="info"
-                        startIcon={<Refresh />}
+                        startIcon={<BackupIcon />}
+                        sx={{ 
+                          py: 1.5, 
+                          borderRadius: 2,
+                          fontWeight: 500,
+                          borderWidth: '2px',
+                          '&:hover': {
+                            borderWidth: '2px',
+                            backgroundColor: alpha(theme.palette.info.main, 0.08)
+                          }
+                        }}
                       >
-                        Verificar Integridad
+                        Copia de seguridad
                       </Button>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
                       <Button 
                         fullWidth 
                         variant="outlined" 
                         color="warning"
-                        startIcon={<Storage />}
+                        startIcon={<SettingsIcon />}
+                        sx={{ 
+                          py: 1.5, 
+                          borderRadius: 2,
+                          fontWeight: 500,
+                          borderWidth: '2px',
+                          '&:hover': {
+                            borderWidth: '2px',
+                            backgroundColor: alpha(theme.palette.warning.main, 0.08)
+                          }
+                        }}
                       >
-                        Ver Logs
+                        Configuración avanzada
                       </Button>
-                    </Grid>
-                  </Grid>
+                    </Box>
                 </CardContent>
               </Card>
-              
-              <Card sx={{ mt: 3 }}>
+              </Box>
+              <Box sx={{ flex: { xs: '1 1 100%', md: '6 1 0%' } }}>
+                <Card>
                 <CardContent>
                   <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                    Backups Recientes
+                      Estadísticas del sistema
                   </Typography>
-                  <TableContainer>
-                    <Table size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Fecha</TableCell>
-                          <TableCell>Tamaño</TableCell>
-                          <TableCell>Tipo</TableCell>
-                          <TableCell align="right">Acciones</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        <TableRow>
-                          <TableCell>10/11/2023 03:00 AM</TableCell>
-                          <TableCell>245 MB</TableCell>
-                          <TableCell>Automático</TableCell>
-                          <TableCell align="right">
-                            <IconButton size="small" color="primary">
-                              <Download />
-                            </IconButton>
-                            <IconButton size="small" color="error">
-                              <DeleteIcon />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell>09/11/2023 03:00 AM</TableCell>
-                          <TableCell>243 MB</TableCell>
-                          <TableCell>Automático</TableCell>
-                          <TableCell align="right">
-                            <IconButton size="small" color="primary">
-                              <Download />
-                            </IconButton>
-                            <IconButton size="small" color="error">
-                              <DeleteIcon />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell>08/11/2023 15:45 PM</TableCell>
-                          <TableCell>242 MB</TableCell>
-                          <TableCell>Manual</TableCell>
-                          <TableCell align="right">
-                            <IconButton size="small" color="primary">
-                              <Download />
-                            </IconButton>
-                            <IconButton size="small" color="error">
-                              <DeleteIcon />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+                    <Typography variant="body2" color="text.secondary" paragraph>
+                      Revisa el rendimiento y uso de recursos
+                    </Typography>
+                    <List>
+                      <ListItem disableGutters>
+                        <ListItemText 
+                          primary="CPU" 
+                          secondary={
+                            <Box sx={{ mt: 1 }}>
+                              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                                <Typography variant="caption" color="text.secondary">Uso actual: 32%</Typography>
+                                <Typography variant="caption" color="primary">Buen rendimiento</Typography>
+                              </Box>
+                              <LinearProgress variant="determinate" value={32} color="primary" sx={{ height: 6, borderRadius: 3 }} />
+                            </Box>
+                          }
+                        />
+                      </ListItem>
+                      <ListItem disableGutters>
+                        <ListItemText 
+                          primary="Memoria" 
+                          secondary={
+                            <Box sx={{ mt: 1 }}>
+                              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                                <Typography variant="caption" color="text.secondary">Uso actual: 64%</Typography>
+                                <Typography variant="caption" color="secondary">Normal</Typography>
+                              </Box>
+                              <LinearProgress variant="determinate" value={64} color="secondary" sx={{ height: 6, borderRadius: 3 }} />
+                            </Box>
+                          }
+                        />
+                      </ListItem>
+                      <ListItem disableGutters>
+                        <ListItemText 
+                          primary="Almacenamiento" 
+                          secondary={
+                            <Box sx={{ mt: 1 }}>
+                              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                                <Typography variant="caption" color="text.secondary">Uso actual: 78%</Typography>
+                                <Typography variant="caption" color="warning.main">Verificar pronto</Typography>
+                              </Box>
+                              <LinearProgress variant="determinate" value={78} color="warning" sx={{ height: 6, borderRadius: 3 }} />
+                            </Box>
+                          }
+                        />
+                      </ListItem>
+                    </List>
                 </CardContent>
               </Card>
-            </Grid>
-          </Grid>
-        </TabPanel>
-        
-        <TabPanel value={tabValue} index={2}>
-          <Typography variant="h6" gutterBottom sx={{ 
-            borderBottom: `2px solid ${theme.palette.primary.main}`,
-            pb: 1,
-            mb: 3
-          }}>
-            Base de Datos
-          </Typography>
+              </Box>
+            </Box>
+          </Paper>
           
           <Box sx={{ mb: 3 }}>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} md={3}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2, alignItems: 'center' }}>
+              <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 0%' } }}>
                 <TextField
                   select
                   fullWidth
-                  label="Acción"
-                  defaultValue="backup"
+                  label="Tipo de datos"
+                  variant="outlined"
+                  defaultValue="uso"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      '&.Mui-focused fieldset': {
+                        borderColor: theme.palette.primary.main,
+                        borderWidth: '2px'
+                      }
+                    }
+                  }}
                 >
-                  <MenuItem value="backup">Backup</MenuItem>
-                  <MenuItem value="optimize">Optimizar</MenuItem>
-                  <MenuItem value="repair">Reparar</MenuItem>
+                  <MenuItem value="uso">Uso del sistema</MenuItem>
+                  <MenuItem value="rendimiento">Rendimiento</MenuItem>
                 </TextField>
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  select
-                  fullWidth
-                  label="Tablas"
-                  defaultValue="all"
-                >
-                  <MenuItem value="all">Todas</MenuItem>
-                  <MenuItem value="users">Usuarios</MenuItem>
-                  <MenuItem value="repairs">Reparaciones</MenuItem>
-                  <MenuItem value="clients">Clientes</MenuItem>
-                </TextField>
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  label="Opciones adicionales"
-                  placeholder="Opciones adicionales"
-                />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <Button 
-                  fullWidth 
-                  variant="contained" 
-                  color="primary"
-                >
-                  Ejecutar
-                </Button>
-              </Grid>
-            </Grid>
-          </Box>
-          
-          <Typography variant="subtitle1" gutterBottom>
-            Estadísticas de la Base de Datos
-          </Typography>
-          
-          <TableContainer component={Paper} variant="outlined" sx={{ mb: 3 }}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Tabla</TableCell>
-                  <TableCell>Registros</TableCell>
-                  <TableCell>Tamaño</TableCell>
-                  <TableCell>Última Actualización</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                <TableRow>
-                  <TableCell>usuarios</TableCell>
-                  <TableCell>15</TableCell>
-                  <TableCell>1.2 MB</TableCell>
-                  <TableCell>10/11/2023</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>clientes</TableCell>
-                  <TableCell>203</TableCell>
-                  <TableCell>5.7 MB</TableCell>
-                  <TableCell>10/11/2023</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>reparaciones</TableCell>
-                  <TableCell>845</TableCell>
-                  <TableCell>18.3 MB</TableCell>
-                  <TableCell>10/11/2023</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>equipos</TableCell>
-                  <TableCell>312</TableCell>
-                  <TableCell>7.5 MB</TableCell>
-                  <TableCell>09/11/2023</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </TabPanel>
-        
-        <TabPanel value={tabValue} index={3}>
-          <Typography variant="h6" gutterBottom sx={{ 
-            borderBottom: `2px solid ${theme.palette.primary.main}`,
-            pb: 1,
-            mb: 3
-          }}>
-            Logs del Sistema
-          </Typography>
-          
-          <Box sx={{ mb: 3 }}>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} md={3}>
-                <TextField
-                  select
-                  fullWidth
-                  label="Tipo de Log"
-                  defaultValue="all"
-                >
-                  <MenuItem value="all">Todos</MenuItem>
-                  <MenuItem value="error">Errores</MenuItem>
-                  <MenuItem value="warning">Advertencias</MenuItem>
-                  <MenuItem value="info">Información</MenuItem>
-                  <MenuItem value="debug">Debug</MenuItem>
-                </TextField>
-              </Grid>
-              <Grid item xs={12} md={3}>
+              </Box>
+              <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 0%' } }}>
                 <TextField
                   fullWidth
                   label="Fecha Inicio"
                   type="date"
-                  defaultValue="2023-11-01"
                   InputLabelProps={{ shrink: true }}
+                  variant="outlined"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      '&.Mui-focused fieldset': {
+                        borderColor: theme.palette.primary.main,
+                        borderWidth: '2px'
+                      }
+                    }
+                  }}
                 />
-              </Grid>
-              <Grid item xs={12} md={3}>
+              </Box>
+              <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 0%' } }}>
                 <TextField
                   fullWidth
                   label="Fecha Fin"
                   type="date"
-                  defaultValue="2023-11-10"
                   InputLabelProps={{ shrink: true }}
+                  variant="outlined"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      '&.Mui-focused fieldset': {
+                        borderColor: theme.palette.primary.main,
+                        borderWidth: '2px'
+                      }
+                    }
+                  }}
                 />
-              </Grid>
-              <Grid item xs={12} md={3}>
+              </Box>
+              <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 0%' } }}>
+                <Button 
+                  fullWidth 
+                  variant="contained" 
+                  color="primary" 
+                  startIcon={<SearchIcon />}
+                  sx={{ 
+                    py: 1.7, 
+                    borderRadius: 2,
+                    fontWeight: 600,
+                    boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.4)}`,
+                    '&:hover': {
+                      boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.6)}`,
+                      transform: 'translateY(-2px)'
+                    }
+                  }}
+                >
+                  Generar
+                </Button>
+              </Box>
+            </Box>
+          </Box>
+        </TabPanel>
+        
+        <TabPanel value={tabValue} index={2}>
+          <Paper sx={{ p: 3, mb: 4, borderRadius: 2, boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.1)}` }}>
+            <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
+              Usuarios
+          </Typography>
+          
+          <Box sx={{ mb: 3 }}>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2, alignItems: 'center' }}>
+                <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 0%' } }}>
+                <TextField
+                  select
+                  fullWidth
+                    label="Filtrar por rol"
+                    variant="outlined"
+                    defaultValue="todos"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        '&.Mui-focused fieldset': {
+                          borderColor: theme.palette.primary.main,
+                          borderWidth: '2px'
+                        }
+                      }
+                    }}
+                  >
+                    <MenuItem value="todos">Todos los roles</MenuItem>
+                    <MenuItem value="admin">Administrador</MenuItem>
+                    <MenuItem value="tecnico">Técnico</MenuItem>
+                    <MenuItem value="recepcion">Recepcionista</MenuItem>
+                </TextField>
+                </Box>
+                <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 0%' } }}>
+                <TextField
+                  select
+                  fullWidth
+                    label="Filtrar por estado"
+                    variant="outlined"
+                    defaultValue="todos"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        '&.Mui-focused fieldset': {
+                          borderColor: theme.palette.primary.main,
+                          borderWidth: '2px'
+                        }
+                      }
+                    }}
+                  >
+                    <MenuItem value="todos">Todos los estados</MenuItem>
+                    <MenuItem value="activo">Activo</MenuItem>
+                    <MenuItem value="inactivo">Inactivo</MenuItem>
+                    <MenuItem value="bloqueado">Bloqueado</MenuItem>
+                </TextField>
+                </Box>
+                <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 0%' } }}>
+                <TextField
+                  fullWidth
+                  label="Opciones adicionales"
+                    variant="outlined"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        '&.Mui-focused fieldset': {
+                          borderColor: theme.palette.primary.main,
+                          borderWidth: '2px'
+                        }
+                      }
+                    }}
+                  />
+                </Box>
+                <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 0%' } }}>
                 <Button 
                   fullWidth 
                   variant="contained" 
                   color="primary"
-                >
-                  Filtrar
+                    startIcon={<SearchIcon />}
+                    sx={{ 
+                      py: 1.7, 
+                      borderRadius: 2,
+                      fontWeight: 600,
+                      boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.4)}`,
+                      '&:hover': {
+                        boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.6)}`,
+                        transform: 'translateY(-2px)'
+                      }
+                    }}
+                  >
+                    Buscar
                 </Button>
-              </Grid>
-            </Grid>
+                </Box>
+              </Box>
           </Box>
           
-          <TableContainer component={Paper} variant="outlined">
-            <Table size="small">
+            <TableContainer>
+              <Table>
               <TableHead>
-                <TableRow>
-                  <TableCell>Fecha y Hora</TableCell>
-                  <TableCell>Tipo</TableCell>
-                  <TableCell>Usuario</TableCell>
-                  <TableCell>Mensaje</TableCell>
+                  <TableRow sx={{ backgroundColor: alpha(theme.palette.primary.main, 0.8) }}>
+                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Usuario</TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Correo</TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Rol</TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Estado</TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }} align="right">Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                <TableRow>
-                  <TableCell>10/11/2023 16:32:45</TableCell>
-                  <TableCell>
-                    <Chip size="small" label="ERROR" color="error" />
-                  </TableCell>
-                  <TableCell>admin@serfix.com</TableCell>
-                  <TableCell>Error al conectar con el servidor SMTP</TableCell>
+                  {users.map((user, index) => (
+                    <TableRow key={index} sx={{ 
+                      '&:hover': { 
+                        backgroundColor: alpha(theme.palette.primary.main, 0.05) 
+                      },
+                      transition: 'background-color 0.2s ease'
+                    }}>
+                      <TableCell>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Avatar 
+                            sx={{ 
+                              mr: 2, 
+                              bgcolor: 
+                                user.role === 'admin' ? theme.palette.primary.main : 
+                                user.role === 'tecnico' ? theme.palette.secondary.main : 
+                                theme.palette.info.main
+                            }}
+                          >
+                            {user.name.charAt(0)}
+                          </Avatar>
+                          <Typography variant="body1">{user.name}</Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>
+                        <Chip 
+                          label={
+                            user.role === 'admin' ? 'Administrador' : 
+                            user.role === 'tecnico' ? 'Técnico' : 
+                            'Recepcionista'
+                          } 
+                          size="small" 
+                          color={
+                            user.role === 'admin' ? 'primary' : 
+                            user.role === 'tecnico' ? 'secondary' : 
+                            'info'
+                          } 
+                          variant="outlined" 
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Chip 
+                          label={
+                            user.status === 'activo' ? 'Activo' : 
+                            user.status === 'inactivo' ? 'Inactivo' : 
+                            'Bloqueado'
+                          } 
+                          size="small" 
+                          color={
+                            user.status === 'activo' ? 'success' : 
+                            user.status === 'inactivo' ? 'warning' : 
+                            'error'
+                          } 
+                          sx={{
+                            bgcolor: user.status === 'activo' 
+                              ? alpha(theme.palette.success.main, 0.1)
+                              : user.status === 'inactivo'
+                              ? alpha(theme.palette.warning.main, 0.1)
+                              : alpha(theme.palette.error.main, 0.1)
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell align="right">
+                        <Tooltip title="Editar">
+                          <IconButton 
+                            color="primary" 
+                            size="small" 
+                            onClick={() => handleEditUser(user)}
+                            sx={{ 
+                              mr: 1,
+                              '&:hover': { 
+                                backgroundColor: alpha(theme.palette.primary.main, 0.1) 
+                              }
+                            }}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Eliminar">
+                          <IconButton 
+                            color="error" 
+                            size="small" 
+                            onClick={handleDeleteConfirm}
+                            sx={{ 
+                              '&:hover': { 
+                                backgroundColor: alpha(theme.palette.error.main, 0.1) 
+                              }
+                            }}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
                 </TableRow>
-                <TableRow>
-                  <TableCell>10/11/2023 14:20:33</TableCell>
-                  <TableCell>
-                    <Chip size="small" label="INFO" color="info" />
-                  </TableCell>
-                  <TableCell>admin@serfix.com</TableCell>
-                  <TableCell>Usuario 'Técnico Uno' actualizado</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>10/11/2023 12:10:15</TableCell>
-                  <TableCell>
-                    <Chip size="small" label="WARNING" color="warning" />
-                  </TableCell>
-                  <TableCell>sistema</TableCell>
-                  <TableCell>Uso de almacenamiento superior al 60%</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>10/11/2023 09:45:22</TableCell>
-                  <TableCell>
-                    <Chip size="small" label="INFO" color="info" />
-                  </TableCell>
-                  <TableCell>gerente@serfix.com</TableCell>
-                  <TableCell>Acceso al sistema desde nueva IP: 192.168.1.101</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>09/11/2023 17:55:12</TableCell>
-                  <TableCell>
-                    <Chip size="small" label="ERROR" color="error" />
-                  </TableCell>
-                  <TableCell>sistema</TableCell>
-                  <TableCell>Fallo en la generación de reporte mensual</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>09/11/2023 10:30:44</TableCell>
-                  <TableCell>
-                    <Chip size="small" label="INFO" color="info" />
-                  </TableCell>
-                  <TableCell>tecnico1@serfix.com</TableCell>
-                  <TableCell>Inicio de sesión exitoso</TableCell>
-                </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>
+            <TablePagination
+              component="div"
+              count={100}
+              page={0}
+              onPageChange={() => {}}
+              rowsPerPage={10}
+              onRowsPerPageChange={() => {}}
+              sx={{ 
+                borderRadius: 0,
+                '& .MuiTablePagination-selectIcon': {
+                  color: theme.palette.primary.main
+                }
+              }}
+            />
+          </Paper>
+        </TabPanel>
+        
+        <TabPanel value={tabValue} index={3}>
+          <Paper sx={{ p: 3, mb: 4, borderRadius: 2, boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.1)}` }}>
+            <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
+              Estadísticas
+          </Typography>
           
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
-            <Button 
-              variant="outlined" 
-              color="primary"
-              sx={{ mr: 2 }}
-            >
-              Exportar Logs
-            </Button>
-            <Button 
-              variant="outlined" 
-              color="secondary"
-            >
-              Limpiar Logs Antiguos
-            </Button>
+          <Box sx={{ mb: 3 }}>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2, alignItems: 'center' }}>
+                <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 0%' } }}>
+                <TextField
+                  select
+                  fullWidth
+                    label="Tipo de datos"
+                    variant="outlined"
+                    defaultValue="uso"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        '&.Mui-focused fieldset': {
+                          borderColor: theme.palette.primary.main,
+                          borderWidth: '2px'
+                        }
+                      }
+                    }}
+                  >
+                    <MenuItem value="uso">Uso del sistema</MenuItem>
+                    <MenuItem value="rendimiento">Rendimiento</MenuItem>
+                </TextField>
+                </Box>
+                <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 0%' } }}>
+                <TextField
+                  fullWidth
+                  label="Fecha Inicio"
+                  type="date"
+                  InputLabelProps={{ shrink: true }}
+                    variant="outlined"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        '&.Mui-focused fieldset': {
+                          borderColor: theme.palette.primary.main,
+                          borderWidth: '2px'
+                        }
+                      }
+                    }}
+                  />
+                </Box>
+                <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 0%' } }}>
+                <TextField
+                  fullWidth
+                  label="Fecha Fin"
+                  type="date"
+                  InputLabelProps={{ shrink: true }}
+                    variant="outlined"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        '&.Mui-focused fieldset': {
+                          borderColor: theme.palette.primary.main,
+                          borderWidth: '2px'
+                        }
+                      }
+                    }}
+                  />
+                </Box>
+                <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 0%' } }}>
+                <Button 
+                  fullWidth 
+                  variant="contained" 
+                  color="primary"
+                    startIcon={<SearchIcon />}
+                    sx={{ 
+                      py: 1.7, 
+                      borderRadius: 2,
+                      fontWeight: 600,
+                      boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.4)}`,
+                      '&:hover': {
+                        boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.6)}`,
+                        transform: 'translateY(-2px)'
+                      }
+                    }}
+                  >
+                    Generar
+                </Button>
+                </Box>
+              </Box>
           </Box>
+          
+            <Card sx={{ 
+              mb: 3, 
+              borderRadius: 2, 
+              boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.15)}`,
+              overflow: 'hidden'
+            }}>
+              <CardContent sx={{ pb: 2 }}>
+                <Typography variant="h6" gutterBottom>
+                  Rendimiento del sistema
+                </Typography>
+                <Typography variant="body2" color="text.secondary" paragraph>
+                  Resumen del rendimiento del sistema en el período seleccionado
+                </Typography>
+
+                <Box sx={{ mt: 3 }}>
+                  <List>
+                    <ListItem disableGutters>
+                      <ListItemText 
+                        primary={
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                            <Typography variant="subtitle2">Usuarios activos</Typography>
+                            <Typography variant="subtitle2" fontWeight="bold" color="primary.main">86%</Typography>
+          </Box>
+                        } 
+                        secondary={
+                          <LinearProgress variant="determinate" value={86} color="primary" sx={{ height: 8, borderRadius: 4 }} />
+                        }
+                      />
+                    </ListItem>
+                    <ListItem disableGutters>
+                      <ListItemText 
+                        primary={
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                            <Typography variant="subtitle2">Reparaciones completadas</Typography>
+                            <Typography variant="subtitle2" fontWeight="bold" color="success.main">74%</Typography>
+                          </Box>
+                        } 
+                        secondary={
+                          <LinearProgress variant="determinate" value={74} color="success" sx={{ height: 8, borderRadius: 4 }} />
+                        }
+                      />
+                    </ListItem>
+                    <ListItem disableGutters>
+                      <ListItemText 
+                        primary={
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                            <Typography variant="subtitle2">Crecimiento de clientes</Typography>
+                            <Typography variant="subtitle2" fontWeight="bold" color="secondary.main">63%</Typography>
+                          </Box>
+                        } 
+                        secondary={
+                          <LinearProgress variant="determinate" value={63} color="secondary" sx={{ height: 8, borderRadius: 4 }} />
+                        }
+                      />
+                    </ListItem>
+                    <ListItem disableGutters>
+                      <ListItemText 
+                        primary={
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                            <Typography variant="subtitle2">Satisfacción de clientes</Typography>
+                            <Typography variant="subtitle2" fontWeight="bold" color="info.main">92%</Typography>
+                          </Box>
+                        } 
+                        secondary={
+                          <LinearProgress variant="determinate" value={92} color="info" sx={{ height: 8, borderRadius: 4 }} />
+                        }
+                      />
+                    </ListItem>
+                  </List>
+                </Box>
+              </CardContent>
+            </Card>
+
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
+              <Card sx={{ 
+                flex: 1, 
+                borderRadius: 2, 
+                boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.15)}`,
+                overflow: 'hidden'
+              }}>
+                <CardContent>
+                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                    Usuarios registrados
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mt: 2, mb: 2 }}>
+                    <Typography variant="h2" color="primary.main" fontWeight="bold">28</Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 2 }}>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography variant="caption" color="text.secondary">Este mes</Typography>
+                      <Typography variant="body2" fontWeight="bold" color="success.main">+5</Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography variant="caption" color="text.secondary">Total</Typography>
+                      <Typography variant="body2" fontWeight="bold">28</Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography variant="caption" color="text.secondary">Activos</Typography>
+                      <Typography variant="body2" fontWeight="bold" color="primary.main">24</Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+
+              <Card sx={{ 
+                flex: 1, 
+                borderRadius: 2, 
+                boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.15)}`,
+                overflow: 'hidden'
+              }}>
+                <CardContent>
+                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                    Backups realizados
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mt: 2, mb: 2 }}>
+                    <Typography variant="h2" color="secondary.main" fontWeight="bold">12</Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 2 }}>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography variant="caption" color="text.secondary">Este mes</Typography>
+                      <Typography variant="body2" fontWeight="bold" color="success.main">+3</Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography variant="caption" color="text.secondary">Total</Typography>
+                      <Typography variant="body2" fontWeight="bold">12</Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography variant="caption" color="text.secondary">Tamaño</Typography>
+                      <Typography variant="body2" fontWeight="bold" color="info.main">2.4 GB</Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Box>
+          </Paper>
         </TabPanel>
       </Paper>
       
@@ -654,69 +1210,116 @@ const AdminPage: React.FC = () => {
         </DialogTitle>
         <DialogContent>
           <Box component="form" sx={{ mt: 2 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box>
                 <TextField
                   fullWidth
                   label="Nombre completo"
                   name="name"
                   value={newUser.name}
-                  onChange={handleInputChange as any}
-                  required
+                  onChange={handleInputChange}
+                  variant="outlined"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      '&.Mui-focused fieldset': {
+                        borderColor: theme.palette.primary.main,
+                        borderWidth: '2px'
+                      }
+                    }
+                  }}
                 />
-              </Grid>
-              <Grid item xs={12}>
+              </Box>
+              <Box>
                 <TextField
                   fullWidth
                   label="Correo electrónico"
                   name="email"
                   type="email"
                   value={newUser.email}
-                  onChange={handleInputChange as any}
-                  required
+                  onChange={handleInputChange}
+                  variant="outlined"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      '&.Mui-focused fieldset': {
+                        borderColor: theme.palette.primary.main,
+                        borderWidth: '2px'
+                      }
+                    }
+                  }}
                 />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
+              </Box>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
+                <Box sx={{ flex: { xs: '1', sm: '1' } }}>
+                  <FormControl fullWidth sx={{ 
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      '&.Mui-focused fieldset': {
+                        borderColor: theme.palette.primary.main,
+                        borderWidth: '2px'
+                      }
+                    }
+                  }}>
                   <InputLabel>Rol</InputLabel>
                   <Select
                     name="role"
                     value={newUser.role}
+                      onChange={handleSelectChange}
                     label="Rol"
-                    onChange={handleInputChange as any}
-                  >
-                    <MenuItem value="Administrador">Administrador</MenuItem>
-                    <MenuItem value="Gerente">Gerente</MenuItem>
-                    <MenuItem value="Técnico">Técnico</MenuItem>
-                    <MenuItem value="Recepcionista">Recepcionista</MenuItem>
+                    >
+                      <MenuItem value="admin">Administrador</MenuItem>
+                      <MenuItem value="tecnico">Técnico</MenuItem>
+                      <MenuItem value="recepcion">Recepcionista</MenuItem>
                   </Select>
                 </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
+                </Box>
+                <Box sx={{ flex: { xs: '1', sm: '1' } }}>
+                  <FormControl fullWidth sx={{ 
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      '&.Mui-focused fieldset': {
+                        borderColor: theme.palette.primary.main,
+                        borderWidth: '2px'
+                      }
+                    }
+                  }}>
                   <InputLabel>Estado</InputLabel>
                   <Select
                     name="status"
                     value={newUser.status}
+                      onChange={handleSelectChange}
                     label="Estado"
-                    onChange={handleInputChange as any}
                   >
-                    <MenuItem value="Activo">Activo</MenuItem>
-                    <MenuItem value="Inactivo">Inactivo</MenuItem>
+                      <MenuItem value="activo">Activo</MenuItem>
+                      <MenuItem value="inactivo">Inactivo</MenuItem>
+                      <MenuItem value="bloqueado">Bloqueado</MenuItem>
                   </Select>
                 </FormControl>
-              </Grid>
+                </Box>
+              </Box>
               {!selectedUser && (
-                <Grid item xs={12}>
+                <Box>
                   <TextField
                     fullWidth
                     label="Contraseña temporal"
+                    name="password"
                     type="password"
-                    defaultValue="serfix2023"
+                    onChange={handleInputChange}
+                    variant="outlined"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        '&.Mui-focused fieldset': {
+                          borderColor: theme.palette.primary.main,
+                          borderWidth: '2px'
+                        }
+                      }
+                    }}
                   />
-                </Grid>
+                </Box>
               )}
-            </Grid>
+            </Box>
           </Box>
         </DialogContent>
         <DialogActions>

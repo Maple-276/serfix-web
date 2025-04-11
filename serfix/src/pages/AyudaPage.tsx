@@ -3,9 +3,7 @@ import {
   Typography,
   Box,
   Paper,
-  Grid,
   List,
-  ListItem,
   ListItemText,
   ListItemIcon,
   Accordion,
@@ -16,7 +14,9 @@ import {
   TextField,
   Card,
   CardContent,
-  CardActions
+  CardActions,
+  alpha,
+  useMediaQuery
 } from '@mui/material';
 import {
   ExpandMore as ExpandMoreIcon,
@@ -31,6 +31,7 @@ import { useTheme } from '@mui/material/styles';
 
 const AyudaPage: React.FC = () => {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const faqItems = [
     {
@@ -56,8 +57,23 @@ const AyudaPage: React.FC = () => {
   ];
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
+    <Box sx={{ 
+      p: 3,
+      backgroundColor: alpha(theme.palette.background.default, 0.7),
+      borderRadius: theme.shape.borderRadius,
+    }}>
+      <Typography 
+        variant="h4" 
+        component="h1" 
+        gutterBottom
+        sx={{
+          background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          fontWeight: 'bold',
+          mb: 2
+        }}
+      >
         Centro de Ayuda
       </Typography>
       
@@ -67,9 +83,22 @@ const AyudaPage: React.FC = () => {
         </Typography>
       </Box>
       
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={8}>
-          <Paper sx={{ p: 3, mb: 4 }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
+        <Box sx={{ flex: { xs: '1 1 100%', md: '8 1 0%' } }}>
+          <Paper 
+            sx={{ 
+              p: 3, 
+              mb: 4,
+              boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.1)}`,
+              borderRadius: 2,
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+              '&:hover': {
+                boxShadow: `0 12px 28px ${alpha(theme.palette.primary.main, 0.15)}`,
+                transform: 'translateY(-4px)'
+              }
+            }}
+          >
             <Typography variant="h5" gutterBottom sx={{ 
               borderBottom: `2px solid ${theme.palette.primary.main}`,
               pb: 1,
@@ -80,17 +109,41 @@ const AyudaPage: React.FC = () => {
             </Typography>
             
             {faqItems.map((item, index) => (
-              <Accordion key={index} sx={{ mt: 2 }}>
+              <Accordion 
+                key={index} 
+                sx={{ 
+                  mt: 2,
+                  borderRadius: '8px',
+                  overflow: 'hidden',
+                  '&:before': {
+                    display: 'none',
+                  },
+                  boxShadow: 'none',
+                  border: `1px solid ${alpha(theme.palette.divider, 0.8)}`,
+                  '&:not(:last-child)': {
+                    mb: 1
+                  },
+                  '&.Mui-expanded': {
+                    boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.1)}`,
+                  }
+                }}
+              >
                 <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
+                  expandIcon={<ExpandMoreIcon sx={{ color: theme.palette.primary.main }} />}
                   aria-controls={`panel${index}-content`}
                   id={`panel${index}-header`}
+                  sx={{
+                    backgroundColor: alpha(theme.palette.background.paper, 0.8),
+                    '&.Mui-expanded': {
+                      backgroundColor: alpha(theme.palette.primary.main, 0.05),
+                    }
+                  }}
                 >
                   <Typography variant="subtitle1" fontWeight="bold">
                     {item.question}
                   </Typography>
                 </AccordionSummary>
-                <AccordionDetails>
+                <AccordionDetails sx={{ px: 3, py: 2 }}>
                   <Typography variant="body1">
                     {item.answer}
                   </Typography>
@@ -99,7 +152,19 @@ const AyudaPage: React.FC = () => {
             ))}
           </Paper>
           
-          <Paper sx={{ p: 3 }}>
+          <Paper 
+            sx={{ 
+              p: 3,
+              boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.1)}`,
+              borderRadius: 2,
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+              '&:hover': {
+                boxShadow: `0 12px 28px ${alpha(theme.palette.primary.main, 0.15)}`,
+                transform: 'translateY(-4px)'
+              }
+            }}
+          >
             <Typography variant="h5" gutterBottom sx={{ 
               borderBottom: `2px solid ${theme.palette.primary.main}`,
               pb: 1,
@@ -114,54 +179,111 @@ const AyudaPage: React.FC = () => {
             </Typography>
             
             <Box component="form" sx={{ mt: 3 }}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="Nombre"
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="Correo electrónico"
-                    type="email"
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid item xs={12}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
+                  <Box sx={{ flex: { xs: '1', sm: '1' } }}>
+                    <TextField
+                      fullWidth
+                      label="Nombre"
+                      variant="outlined"
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          '&.Mui-focused fieldset': {
+                            borderColor: theme.palette.primary.main,
+                            borderWidth: '2px'
+                          }
+                        }
+                      }}
+                    />
+                  </Box>
+                  <Box sx={{ flex: { xs: '1', sm: '1' } }}>
+                    <TextField
+                      fullWidth
+                      label="Correo electrónico"
+                      type="email"
+                      variant="outlined"
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          '&.Mui-focused fieldset': {
+                            borderColor: theme.palette.primary.main,
+                            borderWidth: '2px'
+                          }
+                        }
+                      }}
+                    />
+                  </Box>
+                </Box>
+                <Box>
                   <TextField
                     fullWidth
                     label="Asunto"
                     variant="outlined"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        '&.Mui-focused fieldset': {
+                          borderColor: theme.palette.primary.main,
+                          borderWidth: '2px'
+                        }
+                      }
+                    }}
                   />
-                </Grid>
-                <Grid item xs={12}>
+                </Box>
+                <Box>
                   <TextField
                     fullWidth
                     label="Mensaje"
                     multiline
                     rows={4}
                     variant="outlined"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        '&.Mui-focused fieldset': {
+                          borderColor: theme.palette.primary.main,
+                          borderWidth: '2px'
+                        }
+                      }
+                    }}
                   />
-                </Grid>
-                <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <Button
                     variant="contained"
                     color="primary"
                     endIcon={<SendIcon />}
+                    sx={{ 
+                      py: 1.2, 
+                      px: 3, 
+                      borderRadius: 2,
+                      fontWeight: 600,
+                      boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.4)}`,
+                      '&:hover': {
+                        boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.6)}`,
+                        transform: 'translateY(-2px)'
+                      }
+                    }}
                   >
                     Enviar Mensaje
                   </Button>
-                </Grid>
-              </Grid>
+                </Box>
+              </Box>
             </Box>
           </Paper>
-        </Grid>
+        </Box>
         
-        <Grid item xs={12} md={4}>
-          <Card sx={{ mb: 3 }}>
+        <Box sx={{ flex: { xs: '1 1 100%', md: '4 1 0%' } }}>
+          <Card 
+            sx={{ 
+              mb: 3,
+              borderRadius: 2,
+              boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.1)}`,
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+              '&:hover': {
+                boxShadow: `0 12px 28px ${alpha(theme.palette.primary.main, 0.15)}`,
+                transform: 'translateY(-4px)'
+              }
+            }}
+          >
             <CardContent>
               <Typography variant="h6" gutterBottom sx={{ 
                 display: 'flex',
@@ -172,46 +294,71 @@ const AyudaPage: React.FC = () => {
               </Typography>
               <Divider sx={{ mb: 2 }} />
               <List dense>
-                <ListItem button>
-                  <ListItemIcon>
-                    <InfoIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText primary="Guía de Inicio Rápido" />
-                </ListItem>
-                <ListItem button>
-                  <ListItemIcon>
-                    <InfoIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText primary="Gestión de Clientes" />
-                </ListItem>
-                <ListItem button>
-                  <ListItemIcon>
-                    <InfoIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText primary="Gestión de Reparaciones" />
-                </ListItem>
-                <ListItem button>
-                  <ListItemIcon>
-                    <InfoIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText primary="Reportes y Estadísticas" />
-                </ListItem>
-                <ListItem button>
-                  <ListItemIcon>
-                    <InfoIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText primary="Configuración del Sistema" />
-                </ListItem>
+                {[
+                  'Guía de Inicio Rápido', 
+                  'Gestión de Clientes', 
+                  'Gestión de Reparaciones', 
+                  'Reportes y Estadísticas', 
+                  'Configuración del Sistema'
+                ].map((text, index) => (
+                  <Box 
+                    key={index}
+                    sx={{ 
+                      py: 0.8,
+                      px: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      borderRadius: 1,
+                      mb: 0.5,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                        transform: 'translateX(4px)'
+                      }
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 36 }}>
+                      <InfoIcon fontSize="small" color="primary" />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary={text}
+                      primaryTypographyProps={{
+                        fontSize: '0.95rem'
+                      }}
+                    />
+                  </Box>
+                ))}
               </List>
             </CardContent>
             <CardActions>
-              <Button size="small" color="primary">
+              <Button 
+                size="small" 
+                color="primary"
+                sx={{ 
+                  fontWeight: 500,
+                  '&:hover': {
+                    backgroundColor: alpha(theme.palette.primary.main, 0.08)
+                  }
+                }}
+              >
                 Ver todas las guías
               </Button>
             </CardActions>
           </Card>
           
-          <Card>
+          <Card 
+            sx={{ 
+              borderRadius: 2,
+              boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.1)}`,
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+              '&:hover': {
+                boxShadow: `0 12px 28px ${alpha(theme.palette.primary.main, 0.15)}`,
+                transform: 'translateY(-4px)'
+              }
+            }}
+          >
             <CardContent>
               <Typography variant="h6" gutterBottom sx={{ 
                 display: 'flex',
@@ -226,14 +373,29 @@ const AyudaPage: React.FC = () => {
                 Conéctate para hablar con un agente.
               </Typography>
               <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                <Button variant="outlined" color="primary" startIcon={<ChatBubbleOutlineIcon />}>
+                <Button 
+                  variant="outlined" 
+                  color="primary" 
+                  startIcon={<ChatBubbleOutlineIcon />}
+                  sx={{ 
+                    py: 1, 
+                    px: 2, 
+                    borderRadius: 2,
+                    fontWeight: 500,
+                    borderWidth: '2px',
+                    '&:hover': {
+                      borderWidth: '2px',
+                      backgroundColor: alpha(theme.palette.primary.main, 0.08)
+                    }
+                  }}
+                >
                   Iniciar Chat
                 </Button>
               </Box>
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </Box>
   );
 };

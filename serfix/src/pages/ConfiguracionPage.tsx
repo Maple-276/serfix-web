@@ -3,7 +3,6 @@ import {
   Typography,
   Box,
   Paper,
-  Grid,
   Switch,
   FormControlLabel,
   TextField,
@@ -18,7 +17,14 @@ import {
   Avatar,
   Card,
   CardContent,
-  Alert
+  Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormHelperText,
+  Slider,
+  Chip
 } from '@mui/material';
 import {
   Save as SaveIcon,
@@ -28,9 +34,10 @@ import {
   Palette as PaletteIcon,
   Language as LanguageIcon,
   Edit as EditIcon,
-  PhotoCamera as PhotoCameraIcon
+  PhotoCamera as PhotoCameraIcon,
+  CheckCircle as CheckCircleIcon
 } from '@mui/icons-material';
-import { useTheme } from '@mui/material/styles';
+import { styled, useTheme, alpha } from '@mui/material/styles';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -64,6 +71,43 @@ function a11yProps(index: number) {
     'aria-controls': `config-tabpanel-${index}`,
   };
 }
+
+const SectionTitle = styled(Typography)(({ theme }) => ({
+  borderBottom: `2px solid ${theme.palette.primary.main}`,
+  paddingBottom: theme.spacing(1),
+  marginBottom: theme.spacing(3),
+  fontWeight: 600,
+  display: 'flex',
+  alignItems: 'center',
+  '& .MuiSvgIcon-root': {
+    marginRight: theme.spacing(1),
+    color: theme.palette.primary.main
+  }
+}));
+
+const StyledCard = styled(Card)(({ theme }) => ({
+  transition: 'transform 0.3s, box-shadow 0.3s',
+  borderRadius: theme.spacing(2),
+  overflow: 'hidden',
+  boxShadow: `0 6px 16px ${alpha(theme.palette.primary.main, 0.08)}`,
+  border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+  '&:hover': {
+    transform: 'translateY(-5px)',
+    boxShadow: `0 12px 20px ${alpha(theme.palette.primary.main, 0.15)}`,
+  }
+}));
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  borderRadius: 8,
+  padding: '10px 24px',
+  fontWeight: 600,
+  boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.25)}`,
+  transition: 'all 0.3s',
+  '&:hover': {
+    transform: 'translateY(-2px)',
+    boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.35)}`,
+  }
+}));
 
 const ConfiguracionPage: React.FC = () => {
   const theme = useTheme();
@@ -126,7 +170,18 @@ const ConfiguracionPage: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
+      <Typography 
+        variant="h4" 
+        component="h1" 
+        gutterBottom
+        sx={{
+          fontWeight: 700,
+          background: `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.primary.dark} 90%)`,
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          mb: 2
+        }}
+      >
         Configuración
       </Typography>
       
@@ -136,7 +191,14 @@ const ConfiguracionPage: React.FC = () => {
         </Typography>
       </Box>
       
-      <Paper sx={{ width: '100%' }}>
+      <Paper 
+        sx={{ 
+          width: '100%', 
+          borderRadius: 2,
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+          overflow: 'hidden'
+        }}
+      >
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs
             value={tabValue}
@@ -144,6 +206,23 @@ const ConfiguracionPage: React.FC = () => {
             aria-label="configuración tabs"
             variant="scrollable"
             scrollButtons="auto"
+            sx={{
+              '& .MuiTab-root': {
+                minHeight: 64,
+                transition: 'all 0.2s',
+                '&:hover': {
+                  bgcolor: alpha(theme.palette.primary.main, 0.04)
+                }
+              },
+              '& .Mui-selected': {
+                fontWeight: 600,
+                color: theme.palette.primary.main
+              },
+              '& .MuiTabs-indicator': {
+                height: 3,
+                borderRadius: '3px 3px 0 0'
+              }
+            }}
           >
             <Tab 
               label="Perfil de Usuario" 
@@ -173,15 +252,33 @@ const ConfiguracionPage: React.FC = () => {
         </Box>
         
         {saveSuccess && (
-          <Alert severity="success" sx={{ m: 2 }}>
+          <Alert 
+            severity="success" 
+            sx={{ 
+              m: 2, 
+              borderRadius: 2,
+              animation: 'fadeIn 0.5s',
+              '@keyframes fadeIn': {
+                '0%': { opacity: 0, transform: 'translateY(-10px)' },
+                '100%': { opacity: 1, transform: 'translateY(0)' }
+              },
+              display: 'flex',
+              alignItems: 'center',
+              '& .MuiAlert-icon': {
+                color: theme.palette.success.main,
+                fontSize: 24
+              }
+            }}
+            icon={<CheckCircleIcon fontSize="inherit" />}
+          >
             Cambios guardados con éxito
           </Alert>
         )}
         
         <TabPanel value={tabValue} index={0}>
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={4}>
-              <Card sx={{ mb: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
+            <Box sx={{ flex: { xs: '1 1 100%', md: '4 1 0%' }, display: 'flex', flexDirection: 'column' }}>
+              <StyledCard sx={{ mb: 2 }}>
                 <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <Box sx={{ position: 'relative' }}>
                     <Avatar
@@ -190,7 +287,8 @@ const ConfiguracionPage: React.FC = () => {
                         height: 120,
                         bgcolor: theme.palette.primary.main,
                         fontSize: '3rem',
-                        mb: 2
+                        mb: 2,
+                        boxShadow: `0 8px 16px ${alpha(theme.palette.primary.main, 0.25)}`
                       }}
                     >
                       {perfilData.nombre.charAt(0)}
@@ -200,122 +298,185 @@ const ConfiguracionPage: React.FC = () => {
                         position: 'absolute',
                         bottom: 10,
                         right: 0,
-                        bgcolor: 'background.paper'
+                        bgcolor: 'background.paper',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                        transition: 'all 0.2s',
+                        '&:hover': {
+                          bgcolor: theme.palette.primary.main,
+                          color: '#fff'
+                        }
                       }}
                       aria-label="cambiar foto de perfil"
                     >
                       <PhotoCameraIcon />
                     </IconButton>
                   </Box>
-                  <Typography variant="h6" gutterBottom>
+                  <Typography variant="h6" gutterBottom fontWeight={600}>
                     {perfilData.nombre}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {perfilData.cargo}
-                  </Typography>
+                  <Chip 
+                    label={perfilData.cargo}
+                    color="primary"
+                    size="small"
+                    sx={{ 
+                      fontWeight: 500,
+                      borderRadius: '6px',
+                      px: 1
+                    }}
+                  />
                 </CardContent>
-              </Card>
+              </StyledCard>
               
-              <Typography variant="subtitle2" gutterBottom>
+              <Typography variant="subtitle2" gutterBottom fontWeight={600} sx={{ mt: 2 }}>
                 Información de la cuenta
               </Typography>
-              <List dense>
-                <ListItem>
+              <List dense sx={{ 
+                bgcolor: alpha(theme.palette.background.paper, 0.6),
+                borderRadius: 2,
+                border: `1px solid ${alpha(theme.palette.divider, 0.1)}`
+              }}>
+                <ListItem sx={{ py: 1.5 }}>
                   <ListItemText 
-                    primary="Usuario desde" 
-                    secondary="01/01/2023" 
+                    primary={<Typography variant="body2" fontWeight={500} color="text.primary">Usuario desde</Typography>}
+                    secondary={<Typography variant="body2" color="text.secondary">01/01/2023</Typography>}
                   />
                 </ListItem>
-                <ListItem>
+                <Divider component="li" sx={{ opacity: 0.5 }} />
+                <ListItem sx={{ py: 1.5 }}>
                   <ListItemText 
-                    primary="Último acceso" 
-                    secondary="Hoy, 14:35" 
+                    primary={<Typography variant="body2" fontWeight={500} color="text.primary">Último acceso</Typography>}
+                    secondary={<Typography variant="body2" color="text.secondary">Hoy, 14:35</Typography>}
                   />
                 </ListItem>
-                <ListItem>
+                <Divider component="li" sx={{ opacity: 0.5 }} />
+                <ListItem sx={{ py: 1.5 }}>
                   <ListItemText 
-                    primary="Plan" 
-                    secondary="Profesional" 
+                    primary={<Typography variant="body2" fontWeight={500} color="text.primary">Plan</Typography>}
+                    secondary={<Typography variant="body2" color="text.secondary">Profesional</Typography>}
                   />
                 </ListItem>
               </List>
-            </Grid>
+            </Box>
             
-            <Grid item xs={12} md={8}>
-              <Typography variant="h6" gutterBottom sx={{ 
-                borderBottom: `2px solid ${theme.palette.primary.main}`,
-                pb: 1,
-                mb: 3
-              }}>
-                Información Personal
-              </Typography>
+            <Box sx={{ flex: { xs: '1 1 100%', md: '8 1 0%' } }}>
+              <SectionTitle variant="h6" gutterBottom>
+                <PersonIcon /> Información Personal
+              </SectionTitle>
               
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Box>
                   <TextField
                     fullWidth
                     label="Nombre completo"
                     name="nombre"
                     value={perfilData.nombre}
                     onChange={handlePerfilChange}
+                    variant="outlined"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        transition: 'all 0.2s',
+                        '&:hover': {
+                          boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.1)}`
+                        },
+                        '&.Mui-focused': {
+                          boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.2)}`
+                        }
+                      }
+                    }}
                   />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="Correo electrónico"
-                    name="email"
-                    type="email"
-                    value={perfilData.email}
-                    onChange={handlePerfilChange}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="Teléfono"
-                    name="telefono"
-                    value={perfilData.telefono}
-                    onChange={handlePerfilChange}
-                  />
-                </Grid>
-                <Grid item xs={12}>
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
+                  <Box sx={{ flex: 1 }}>
+                    <TextField
+                      fullWidth
+                      label="Correo electrónico"
+                      name="email"
+                      type="email"
+                      value={perfilData.email}
+                      onChange={handlePerfilChange}
+                      variant="outlined"
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 2,
+                          transition: 'all 0.2s',
+                          '&:hover': {
+                            boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.1)}`
+                          },
+                          '&.Mui-focused': {
+                            boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.2)}`
+                          }
+                        }
+                      }}
+                    />
+                  </Box>
+                  <Box sx={{ flex: 1 }}>
+                    <TextField
+                      fullWidth
+                      label="Teléfono"
+                      name="telefono"
+                      value={perfilData.telefono}
+                      onChange={handlePerfilChange}
+                      variant="outlined"
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 2,
+                          transition: 'all 0.2s',
+                          '&:hover': {
+                            boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.1)}`
+                          },
+                          '&.Mui-focused': {
+                            boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.2)}`
+                          }
+                        }
+                      }}
+                    />
+                  </Box>
+                </Box>
+                <Box>
                   <TextField
                     fullWidth
                     label="Cargo"
                     name="cargo"
                     value={perfilData.cargo}
                     onChange={handlePerfilChange}
+                    variant="outlined"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        transition: 'all 0.2s',
+                        '&:hover': {
+                          boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.1)}`
+                        },
+                        '&.Mui-focused': {
+                          boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.2)}`
+                        }
+                      }
+                    }}
                   />
-                </Grid>
-                <Grid item xs={12}>
-                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      startIcon={<SaveIcon />}
-                      onClick={handleSavePerfil}
-                    >
-                      Guardar Cambios
-                    </Button>
-                  </Box>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                  <StyledButton
+                    variant="contained"
+                    color="primary"
+                    startIcon={<SaveIcon />}
+                    onClick={handleSavePerfil}
+                  >
+                    Guardar Cambios
+                  </StyledButton>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
         </TabPanel>
         
         <TabPanel value={tabValue} index={1}>
-          <Typography variant="h6" gutterBottom sx={{ 
-            borderBottom: `2px solid ${theme.palette.primary.main}`,
-            pb: 1,
-            mb: 3
-          }}>
-            Cambiar Contraseña
-          </Typography>
+          <SectionTitle variant="h6" gutterBottom>
+            <SecurityIcon /> Cambiar Contraseña
+          </SectionTitle>
           
-          <Grid container spacing={2} maxWidth="md">
-            <Grid item xs={12}>
+          <Box sx={{ maxWidth: "md", display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box>
               <TextField
                 fullWidth
                 label="Contraseña actual"
@@ -323,9 +484,22 @@ const ConfiguracionPage: React.FC = () => {
                 type="password"
                 value={passwordData.currentPassword}
                 onChange={handlePasswordChange}
+                variant="outlined"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                      boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.1)}`
+                    },
+                    '&.Mui-focused': {
+                      boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.2)}`
+                    }
+                  }
+                }}
               />
-            </Grid>
-            <Grid item xs={12}>
+            </Box>
+            <Box>
               <TextField
                 fullWidth
                 label="Nueva contraseña"
@@ -333,9 +507,22 @@ const ConfiguracionPage: React.FC = () => {
                 type="password"
                 value={passwordData.newPassword}
                 onChange={handlePasswordChange}
+                variant="outlined"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                      boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.1)}`
+                    },
+                    '&.Mui-focused': {
+                      boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.2)}`
+                    }
+                  }
+                }}
               />
-            </Grid>
-            <Grid item xs={12}>
+            </Box>
+            <Box>
               <TextField
                 fullWidth
                 label="Confirmar nueva contraseña"
@@ -345,51 +532,85 @@ const ConfiguracionPage: React.FC = () => {
                 onChange={handlePasswordChange}
                 error={passwordData.newPassword !== passwordData.confirmPassword && passwordData.confirmPassword !== ''}
                 helperText={passwordData.newPassword !== passwordData.confirmPassword && passwordData.confirmPassword !== '' ? 'Las contraseñas no coinciden' : ''}
+                variant="outlined"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                      boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.1)}`
+                    },
+                    '&.Mui-focused': {
+                      boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.2)}`
+                    }
+                  }
+                }}
               />
-            </Grid>
-            <Grid item xs={12}>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleChangePassword}
-                  disabled={!passwordData.currentPassword || !passwordData.newPassword || passwordData.newPassword !== passwordData.confirmPassword}
-                >
-                  Cambiar Contraseña
-                </Button>
-              </Box>
-            </Grid>
-          </Grid>
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+              <StyledButton
+                variant="contained"
+                color="primary"
+                onClick={handleChangePassword}
+                disabled={!passwordData.currentPassword || !passwordData.newPassword || passwordData.newPassword !== passwordData.confirmPassword}
+              >
+                Cambiar Contraseña
+              </StyledButton>
+            </Box>
+          </Box>
           
           <Divider sx={{ my: 4 }} />
           
-          <Typography variant="h6" gutterBottom sx={{ 
-            borderBottom: `2px solid ${theme.palette.primary.main}`,
-            pb: 1,
-            mb: 3
-          }}>
-            Sesiones Activas
-          </Typography>
+          <SectionTitle variant="h6" gutterBottom>
+            <SecurityIcon /> Sesiones Activas
+          </SectionTitle>
           
-          <List>
+          <List sx={{ 
+            bgcolor: alpha(theme.palette.background.paper, 0.6),
+            borderRadius: 2,
+            border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+            overflow: 'hidden'
+          }}>
             <ListItem secondaryAction={
-              <Button size="small" variant="outlined" color="error">
+              <Button 
+                size="small" 
+                variant="outlined" 
+                color="error"
+                sx={{ 
+                  borderRadius: 1.5,
+                  fontWeight: 500,
+                  '&:hover': {
+                    backgroundColor: alpha(theme.palette.error.main, 0.08)
+                  }
+                }}
+              >
                 Cerrar
               </Button>
             }>
               <ListItemText
-                primary="Computadora Windows (Actual)"
+                primary={<Typography fontWeight={500}>Computadora Windows (Actual)</Typography>}
                 secondary="Chrome • IP: 192.168.1.100 • Último acceso: Hace 5 minutos"
               />
             </ListItem>
             <Divider component="li" />
             <ListItem secondaryAction={
-              <Button size="small" variant="outlined" color="error">
+              <Button 
+                size="small" 
+                variant="outlined" 
+                color="error"
+                sx={{ 
+                  borderRadius: 1.5,
+                  fontWeight: 500,
+                  '&:hover': {
+                    backgroundColor: alpha(theme.palette.error.main, 0.08)
+                  }
+                }}
+              >
                 Cerrar
               </Button>
             }>
               <ListItemText
-                primary="iPhone 13"
+                primary={<Typography fontWeight={500}>iPhone 13</Typography>}
                 secondary="Safari • IP: 192.168.1.101 • Último acceso: Ayer, 18:45"
               />
             </ListItem>
@@ -397,18 +618,19 @@ const ConfiguracionPage: React.FC = () => {
         </TabPanel>
         
         <TabPanel value={tabValue} index={2}>
-          <Typography variant="h6" gutterBottom sx={{ 
-            borderBottom: `2px solid ${theme.palette.primary.main}`,
-            pb: 1,
-            mb: 3
-          }}>
-            Preferencias de Notificaciones
-          </Typography>
+          <SectionTitle variant="h6" gutterBottom>
+            <NotificationsIcon /> Preferencias de Notificaciones
+          </SectionTitle>
           
-          <List>
+          <List sx={{ 
+            bgcolor: alpha(theme.palette.background.paper, 0.6),
+            borderRadius: 2,
+            border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+            overflow: 'hidden'
+          }}>
             <ListItem>
               <ListItemText 
-                primary="Notificaciones por correo electrónico"
+                primary={<Typography fontWeight={500}>Notificaciones por correo electrónico</Typography>}
                 secondary="Recibe alertas importantes y actualizaciones por correo"
               />
               <FormControlLabel
@@ -418,6 +640,17 @@ const ConfiguracionPage: React.FC = () => {
                     onChange={handlePerfilChange}
                     name="notificacionesEmail"
                     color="primary"
+                    sx={{
+                      '& .MuiSwitch-switchBase.Mui-checked': {
+                        color: theme.palette.primary.main,
+                        '&:hover': {
+                          backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                        },
+                      },
+                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                        backgroundColor: alpha(theme.palette.primary.main, 0.5),
+                      },
+                    }}
                   />
                 }
                 label=""
@@ -426,7 +659,7 @@ const ConfiguracionPage: React.FC = () => {
             <Divider component="li" />
             <ListItem>
               <ListItemText 
-                primary="Notificaciones push"
+                primary={<Typography fontWeight={500}>Notificaciones push</Typography>}
                 secondary="Recibe alertas en tiempo real en el navegador"
               />
               <FormControlLabel
@@ -436,6 +669,17 @@ const ConfiguracionPage: React.FC = () => {
                     onChange={handlePerfilChange}
                     name="notificacionesPush"
                     color="primary"
+                    sx={{
+                      '& .MuiSwitch-switchBase.Mui-checked': {
+                        color: theme.palette.primary.main,
+                        '&:hover': {
+                          backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                        },
+                      },
+                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                        backgroundColor: alpha(theme.palette.primary.main, 0.5),
+                      },
+                    }}
                   />
                 }
                 label=""
@@ -444,7 +688,7 @@ const ConfiguracionPage: React.FC = () => {
             <Divider component="li" />
             <ListItem>
               <ListItemText 
-                primary="Recordatorios de seguimiento"
+                primary={<Typography fontWeight={500}>Recordatorios de seguimiento</Typography>}
                 secondary="Recibe recordatorios para dar seguimiento a reparaciones pendientes"
               />
               <FormControlLabel
@@ -452,6 +696,17 @@ const ConfiguracionPage: React.FC = () => {
                   <Switch 
                     defaultChecked
                     color="primary"
+                    sx={{
+                      '& .MuiSwitch-switchBase.Mui-checked': {
+                        color: theme.palette.primary.main,
+                        '&:hover': {
+                          backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                        },
+                      },
+                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                        backgroundColor: alpha(theme.palette.primary.main, 0.5),
+                      },
+                    }}
                   />
                 }
                 label=""
@@ -460,7 +715,7 @@ const ConfiguracionPage: React.FC = () => {
             <Divider component="li" />
             <ListItem>
               <ListItemText 
-                primary="Actualizaciones del sistema"
+                primary={<Typography fontWeight={500}>Actualizaciones del sistema</Typography>}
                 secondary="Recibe notificaciones sobre nuevas funciones y mejoras"
               />
               <FormControlLabel
@@ -468,6 +723,17 @@ const ConfiguracionPage: React.FC = () => {
                   <Switch 
                     defaultChecked
                     color="primary"
+                    sx={{
+                      '& .MuiSwitch-switchBase.Mui-checked': {
+                        color: theme.palette.primary.main,
+                        '&:hover': {
+                          backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                        },
+                      },
+                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                        backgroundColor: alpha(theme.palette.primary.main, 0.5),
+                      },
+                    }}
                   />
                 }
                 label=""
@@ -476,29 +742,25 @@ const ConfiguracionPage: React.FC = () => {
           </List>
           
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
-            <Button
+            <StyledButton
               variant="contained"
               color="primary"
               startIcon={<SaveIcon />}
               onClick={handleSavePerfil}
             >
               Guardar Preferencias
-            </Button>
+            </StyledButton>
           </Box>
         </TabPanel>
         
         <TabPanel value={tabValue} index={3}>
-          <Typography variant="h6" gutterBottom sx={{ 
-            borderBottom: `2px solid ${theme.palette.primary.main}`,
-            pb: 1,
-            mb: 3
-          }}>
-            Tema y Apariencia
-          </Typography>
+          <SectionTitle variant="h6" gutterBottom>
+            <PaletteIcon /> Tema y Apariencia
+          </SectionTitle>
           
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Typography variant="subtitle1" gutterBottom>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 3 }}>
+            <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 50%' } }}>
+              <Typography variant="subtitle1" gutterBottom fontWeight={500}>
                 Tema
               </Typography>
               <Box sx={{ display: 'flex', gap: 2, mb: 4 }}>
@@ -513,6 +775,15 @@ const ConfiguracionPage: React.FC = () => {
                     border: perfilData.tema === 'claro' ? `2px solid ${theme.palette.primary.main}` : 'none',
                     bgcolor: '#ffffff',
                     color: '#333333',
+                    borderRadius: 2,
+                    boxShadow: perfilData.tema === 'claro' 
+                      ? `0 0 0 3px ${alpha(theme.palette.primary.main, 0.2)}`
+                      : '0 2px 8px rgba(0,0,0,0.1)',
+                    transition: 'all 0.2s',
+                    fontWeight: 500,
+                    '&:hover': {
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                    }
                   }}
                   onClick={() => setPerfilData({ ...perfilData, tema: 'claro' })}
                 >
@@ -529,16 +800,25 @@ const ConfiguracionPage: React.FC = () => {
                     border: perfilData.tema === 'oscuro' ? `2px solid ${theme.palette.primary.main}` : 'none',
                     bgcolor: '#333333',
                     color: '#ffffff',
+                    borderRadius: 2,
+                    boxShadow: perfilData.tema === 'oscuro' 
+                      ? `0 0 0 3px ${alpha(theme.palette.primary.main, 0.2)}`
+                      : '0 2px 8px rgba(0,0,0,0.1)',
+                    transition: 'all 0.2s',
+                    fontWeight: 500,
+                    '&:hover': {
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                    }
                   }}
                   onClick={() => setPerfilData({ ...perfilData, tema: 'oscuro' })}
                 >
                   Oscuro
                 </Paper>
               </Box>
-            </Grid>
+            </Box>
             
-            <Grid item xs={12} md={6}>
-              <Typography variant="subtitle1" gutterBottom>
+            <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 50%' } }}>
+              <Typography variant="subtitle1" gutterBottom fontWeight={500}>
                 Idioma
               </Typography>
               <Box sx={{ display: 'flex', gap: 2 }}>
@@ -551,12 +831,20 @@ const ConfiguracionPage: React.FC = () => {
                     justifyContent: 'center',
                     cursor: 'pointer',
                     border: perfilData.idioma === 'español' ? `2px solid ${theme.palette.primary.main}` : 'none',
+                    borderRadius: 2,
+                    boxShadow: perfilData.idioma === 'español' 
+                      ? `0 0 0 3px ${alpha(theme.palette.primary.main, 0.2)}`
+                      : '0 2px 8px rgba(0,0,0,0.1)',
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                    }
                   }}
                   onClick={() => setPerfilData({ ...perfilData, idioma: 'español' })}
                 >
                   <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <LanguageIcon sx={{ mb: 1 }} />
-                    Español
+                    <LanguageIcon sx={{ mb: 1, color: theme.palette.primary.main }} />
+                    <Typography fontWeight={500}>Español</Typography>
                   </Box>
                 </Paper>
                 <Paper
@@ -568,27 +856,35 @@ const ConfiguracionPage: React.FC = () => {
                     justifyContent: 'center',
                     cursor: 'pointer',
                     border: perfilData.idioma === 'inglés' ? `2px solid ${theme.palette.primary.main}` : 'none',
+                    borderRadius: 2,
+                    boxShadow: perfilData.idioma === 'inglés' 
+                      ? `0 0 0 3px ${alpha(theme.palette.primary.main, 0.2)}`
+                      : '0 2px 8px rgba(0,0,0,0.1)',
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                    }
                   }}
                   onClick={() => setPerfilData({ ...perfilData, idioma: 'inglés' })}
                 >
                   <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <LanguageIcon sx={{ mb: 1 }} />
-                    English
+                    <LanguageIcon sx={{ mb: 1, color: theme.palette.primary.main }} />
+                    <Typography fontWeight={500}>English</Typography>
                   </Box>
                 </Paper>
               </Box>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
           
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
-            <Button
+            <StyledButton
               variant="contained"
               color="primary"
               startIcon={<SaveIcon />}
               onClick={handleSavePerfil}
             >
               Aplicar Cambios
-            </Button>
+            </StyledButton>
           </Box>
         </TabPanel>
       </Paper>

@@ -90,33 +90,46 @@ const StatusChip = styled(Chip)(({ theme }) => ({
   },
 }));
 
-const SectionBox = styled(Box)(({ theme }) => ({
-  margin: theme.spacing(0, 0, 4),
-  position: 'relative',
+const SectionBox = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  borderRadius: theme.spacing(2),
+  height: '100%',
+  boxShadow: `0 6px 16px ${alpha(theme.palette.primary.main, 0.08)}`,
+  border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+  transition: 'transform 0.3s, box-shadow 0.3s',
+  '&:hover': {
+    transform: 'translateY(-5px)',
+    boxShadow: `0 12px 20px ${alpha(theme.palette.primary.main, 0.15)}`,
+  }
 }));
 
-const SectionTitle = styled(Typography)(({ theme }) => ({
-  fontSize: '1.1rem',
-  fontWeight: 600,
-  marginBottom: theme.spacing(2),
+const SectionTitle = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  gap: theme.spacing(1),
-  '& svg': {
+  marginBottom: theme.spacing(3),
+  paddingBottom: theme.spacing(1.5),
+  borderBottom: `2px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+  '& .MuiSvgIcon-root': {
     color: theme.palette.primary.main,
-    opacity: 0.8,
+    marginRight: theme.spacing(1),
   },
+  '& .MuiTypography-root': {
+    fontWeight: 600,
+    fontSize: '1.1rem',
+  }
 }));
 
 const InfoLabel = styled(Typography)(({ theme }) => ({
-  fontSize: '0.85rem',
+  fontSize: '0.75rem',
+  textTransform: 'uppercase',
   color: theme.palette.text.secondary,
-  fontWeight: 500,
+  fontWeight: 600,
   marginBottom: theme.spacing(0.5),
+  letterSpacing: '0.5px',
 }));
 
 const InfoValue = styled(Typography)(({ theme }) => ({
-  fontSize: '1rem',
+  fontSize: '0.95rem',
   color: theme.palette.text.primary,
   fontWeight: 500,
 }));
@@ -310,21 +323,21 @@ const RepairDetailPage = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
+  
   useEffect(() => {
     const fetchRepair = async () => {
       setIsLoading(true);
       
-      if (repairId) {
+    if (repairId) {
         try {
           // Simular una carga para mejor UX
           await new Promise(resolve => setTimeout(resolve, 500));
           
-          const foundRepair = getRepairById(repairId);
-          if (foundRepair) {
-            setRepair(foundRepair);
+      const foundRepair = getRepairById(repairId);
+      if (foundRepair) {
+        setRepair(foundRepair);
             setError(null);
-          } else {
+      } else {
             setError('No se encontró la reparación con el ID especificado');
             setRepair(null);
           }
@@ -369,7 +382,7 @@ const RepairDetailPage = () => {
           onClick={() => navigate(-1)}
           startIcon={<ArrowBackIcon />}
         >
-          Volver
+            Volver
         </StyledButton>
       </Container>
     );
@@ -397,28 +410,42 @@ const RepairDetailPage = () => {
           <Box sx={{ p: 3 }}>
             <SectionBox>
               <Skeleton variant="text" width={200} height={40} />
-              <Grid container spacing={3}>
-                {[1, 2, 3, 4].map((item) => (
-                  <Grid item key={item} xs={12} sm={6}>
-                    <Skeleton variant="text" width={100} height={20} />
-                    <Skeleton variant="text" width={150} height={30} />
-                  </Grid>
-                ))}
-              </Grid>
+              <Box>
+                <Box sx={{ 
+                  display: 'flex', 
+                  flexDirection: { xs: 'column', sm: 'row' }, 
+                  flexWrap: 'wrap', 
+                  gap: 3 
+                }}>
+                  {[1, 2, 3, 4].map((item) => (
+                    <Box key={item} sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)' } }}>
+                      <Skeleton variant="text" width={100} height={20} />
+                      <Skeleton variant="text" width={150} height={30} />
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
             </SectionBox>
             
             <Divider sx={{ my: 3 }} />
             
             <SectionBox>
               <Skeleton variant="text" width={200} height={40} />
-              <Grid container spacing={3}>
-                {[1, 2, 3, 4].map((item) => (
-                  <Grid item key={item} xs={12} sm={6}>
-                    <Skeleton variant="text" width={100} height={20} />
-                    <Skeleton variant="text" width={150} height={30} />
-                  </Grid>
-                ))}
-              </Grid>
+              <Box>
+                <Box sx={{ 
+                  display: 'flex', 
+                  flexDirection: { xs: 'column', sm: 'row' }, 
+                  flexWrap: 'wrap', 
+                  gap: 3 
+                }}>
+                  {[1, 2, 3, 4].map((item) => (
+                    <Box key={item} sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)' } }}>
+                      <Skeleton variant="text" width={100} height={20} />
+                      <Skeleton variant="text" width={150} height={30} />
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
             </SectionBox>
           </Box>
         </DetailCard>
@@ -474,7 +501,7 @@ const RepairDetailPage = () => {
           >
             <CalendarIcon fontSize="small" />
             Ingresado el {formatShortDate(repair.entryDate)}
-          </Typography>
+              </Typography>
         </Box>
         
         <StatusChip 
@@ -512,10 +539,10 @@ const RepairDetailPage = () => {
           <Box>
             <Typography variant="subtitle1" fontWeight={600} gutterBottom>
               Estado: {statusLabel}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
+          </Typography>
+              <Typography variant="body2" color="text.secondary">
               {statusDescription}
-            </Typography>
+              </Typography>
           </Box>
         </CardContent>
         <LinearProgress 
@@ -559,8 +586,12 @@ const RepairDetailPage = () => {
           {tabValue === 0 && (
             <Fade in={tabValue === 0}>
               <Box>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} sm={6}>
+                <Box sx={{ 
+                  display: 'flex', 
+                  flexDirection: { xs: 'column', md: 'row' }, 
+                  gap: 3 
+                }}>
+                  <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 50%' } }}>
                     <SectionBox>
                       <SectionTitle>
                         <DescriptionIcon />
@@ -595,9 +626,9 @@ const RepairDetailPage = () => {
                         )}
                       </Stack>
                     </SectionBox>
-                  </Grid>
-                  
-                  <Grid item xs={12} sm={6}>
+        </Box>
+        
+                  <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 50%' } }}>
                     <SectionBox>
                       <SectionTitle>
                         <DeviceIcon />
@@ -620,15 +651,15 @@ const RepairDetailPage = () => {
                             <InfoValue>{deviceLabel}</InfoValue>
                           </Box>
                         </Box>
-                        
-                        {repair.brand && (
+            
+            {repair.brand && (
                           <Box>
                             <InfoLabel>Marca</InfoLabel>
                             <InfoValue>{repair.brand}</InfoValue>
                           </Box>
-                        )}
-                        
-                        {repair.model && (
+            )}
+            
+            {repair.model && (
                           <Box>
                             <InfoLabel>Modelo</InfoLabel>
                             <InfoValue>{repair.model}</InfoValue>
@@ -636,8 +667,8 @@ const RepairDetailPage = () => {
                         )}
                       </Stack>
                     </SectionBox>
-                  </Grid>
-                </Grid>
+                  </Box>
+                </Box>
                 
                 <Divider sx={{ my: 4 }} />
                 
@@ -654,7 +685,7 @@ const RepairDetailPage = () => {
                     border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
                   }}>
                     {repair.problemDescription}
-                  </Typography>
+                </Typography>
                 </SectionBox>
                 
                 {repair.notes && (
@@ -671,11 +702,11 @@ const RepairDetailPage = () => {
                       border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
                     }}>
                       {repair.notes}
-                    </Typography>
+                </Typography>
                   </SectionBox>
-                )}
-                
-                {repair.estimatedCost !== undefined && (
+            )}
+            
+            {repair.estimatedCost !== undefined && (
                   <SectionBox>
                     <SectionTitle>
                       <MoneyIcon />
@@ -690,14 +721,19 @@ const RepairDetailPage = () => {
                       }}
                     >
                       <CardContent>
-                        <Grid container spacing={2}>
-                          <Grid item xs={12} sm={6}>
+                        <Box sx={{ 
+                          display: 'flex', 
+                          flexDirection: { xs: 'column', sm: 'row' }, 
+                          flexWrap: 'wrap', 
+                          gap: 2 
+                        }}>
+                          <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 8px)' } }}>
                             <InfoLabel>Costo Estimado</InfoLabel>
                             <Typography variant="h5" color="primary" fontWeight="bold">
-                              ${repair.estimatedCost.toFixed(2)}
-                            </Typography>
-                          </Grid>
-                        </Grid>
+                  ${repair.estimatedCost.toFixed(2)}
+                </Typography>
+                          </Box>
+                        </Box>
                       </CardContent>
                     </Card>
                   </SectionBox>
@@ -715,54 +751,41 @@ const RepairDetailPage = () => {
                     <PersonIcon />
                     Información del Cliente
                   </SectionTitle>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} sm={6}>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    flexDirection: { xs: 'column', sm: 'row' }, 
+                    flexWrap: 'wrap', 
+                    gap: 3 
+                  }}>
+                    <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)' } }}>
                       <Box>
                         <InfoLabel>Nombre</InfoLabel>
                         <InfoValue>{repair.clientName}</InfoValue>
                       </Box>
-                    </Grid>
+                    </Box>
                     
-                    <Grid item xs={12} sm={6}>
+                    <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)' } }}>
                       <Box>
                         <InfoLabel>Email</InfoLabel>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <EmailIcon fontSize="small" color="action" />
                           <InfoValue>{repair.email}</InfoValue>
-                          <Tooltip title="Enviar email">
-                            <IconButton 
-                              size="small" 
-                              color="primary"
-                              component="a"
-                              href={`mailto:${repair.email}`}
-                            >
-                              <EmailIcon fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
                         </Box>
                       </Box>
-                    </Grid>
+                    </Box>
                     
                     {repair.phone && (
-                      <Grid item xs={12} sm={6}>
+                      <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)' } }}>
                         <Box>
                           <InfoLabel>Teléfono</InfoLabel>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <PhoneIcon fontSize="small" color="action" />
                             <InfoValue>{repair.phone}</InfoValue>
-                            <Tooltip title="Llamar">
-                              <IconButton 
-                                size="small" 
-                                color="primary"
-                                component="a"
-                                href={`tel:${repair.phone}`}
-                              >
-                                <PhoneIcon fontSize="small" />
-                              </IconButton>
-                            </Tooltip>
                           </Box>
                         </Box>
-                      </Grid>
+                      </Box>
                     )}
-                  </Grid>
+                  </Box>
                 </SectionBox>
               </Box>
             </Fade>
@@ -777,8 +800,13 @@ const RepairDetailPage = () => {
                     <DeviceIcon />
                     Información del Dispositivo
                   </SectionTitle>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} sm={6}>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    flexDirection: { xs: 'column', sm: 'row' }, 
+                    flexWrap: 'wrap', 
+                    gap: 3 
+                  }}>
+                    <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)' } }}>
                       <Box>
                         <InfoLabel>Tipo de Dispositivo</InfoLabel>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -795,32 +823,32 @@ const RepairDetailPage = () => {
                           <InfoValue>{deviceLabel}</InfoValue>
                         </Box>
                       </Box>
-                    </Grid>
-                    
+        </Box>
+        
                     {repair.brand && (
-                      <Grid item xs={12} sm={6}>
+                      <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)' } }}>
                         <Box>
                           <InfoLabel>Marca</InfoLabel>
                           <InfoValue>{repair.brand}</InfoValue>
                         </Box>
-                      </Grid>
+                      </Box>
                     )}
                     
                     {repair.model && (
-                      <Grid item xs={12} sm={6}>
+                      <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)' } }}>
                         <Box>
                           <InfoLabel>Modelo</InfoLabel>
                           <InfoValue>{repair.model}</InfoValue>
                         </Box>
-                      </Grid>
+                      </Box>
                     )}
-                  </Grid>
+                  </Box>
                 </SectionBox>
                 
                 <SectionBox>
                   <SectionTitle>
                     <DescriptionIcon />
-                    Descripción del Problema
+            Descripción del Problema
                   </SectionTitle>
                   <Typography variant="body1" sx={{ 
                     whiteSpace: 'pre-wrap',
@@ -829,8 +857,8 @@ const RepairDetailPage = () => {
                     bgcolor: alpha(theme.palette.background.default, 0.5),
                     border: `1px solid ${alpha(theme.palette.divider, 0.1)}`, 
                   }}>
-                    {repair.problemDescription}
-                  </Typography>
+            {repair.problemDescription}
+          </Typography>
                 </SectionBox>
               </Box>
             </Fade>
