@@ -259,17 +259,17 @@ const ClientesPage: React.FC = () => {
                     <Table>
                         <TableHead>
                             <TableRow sx={{ backgroundColor: theme.palette.primary.dark }}>
-                                <TableCell sx={{ color: theme.palette.common.white, fontWeight: 'bold' }}>Nombre</TableCell>
-                                <TableCell sx={{ color: theme.palette.common.white, fontWeight: 'bold' }}>Correo</TableCell>
-                                <TableCell sx={{ color: theme.palette.common.white, fontWeight: 'bold' }}>Teléfono</TableCell>
-                                <TableCell sx={{ color: theme.palette.common.white, fontWeight: 'bold' }}>Dirección</TableCell>
-                                <TableCell sx={{ color: theme.palette.common.white, fontWeight: 'bold' }} align="center">
+                                <TableCell sx={{ color: theme.palette.common.black, fontWeight: 'bold' }}>Nombre</TableCell>
+                                <TableCell sx={{ color: theme.palette.common.black, fontWeight: 'bold' }}>Correo</TableCell>
+                                <TableCell sx={{ color: theme.palette.common.black, fontWeight: 'bold' }}>Teléfono</TableCell>
+                                <TableCell sx={{ color: theme.palette.common.black, fontWeight: 'bold' }}>Dirección</TableCell>
+                                <TableCell sx={{ color: theme.palette.common.black, fontWeight: 'bold' }} align="center">
                                     Equipos
                                 </TableCell>
-                                <TableCell sx={{ color: theme.palette.common.white, fontWeight: 'bold' }} align="center">
+                                    <TableCell sx={{ color: theme.palette.common.black, fontWeight: 'bold' }} align="center">
                                     Reparaciones
                                 </TableCell>
-                                <TableCell sx={{ color: theme.palette.common.white, fontWeight: 'bold' }} align="center">
+                                <TableCell sx={{ color: theme.palette.common.black, fontWeight: 'bold' }} align="center">
                                     Acciones
                                 </TableCell>
                             </TableRow>
