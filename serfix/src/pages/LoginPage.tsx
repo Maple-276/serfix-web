@@ -236,6 +236,7 @@ const StyledButton = styled(Button, {
   },
 }));
 
+// Componente de campo de texto estilizado
 const StyledTextField = styled(TextField)(({ theme }) => ({
   marginBottom: theme.spacing(2.5),
   
@@ -250,6 +251,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
     },
   },
   
+  // Estilos para el campo de texto
   '& .MuiOutlinedInput-root': {
     '&:hover .MuiOutlinedInput-notchedOutline': {
       borderColor: theme.palette.primary.main,
@@ -262,6 +264,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
     },
   },
   
+  // Estilos para el label
   '& .MuiInputLabel-root': {
     fontWeight: 500,
     
