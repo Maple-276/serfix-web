@@ -26,7 +26,7 @@ import {
   Person as PersonIcon,
   ArrowBack as ArrowBackIcon
 } from '@mui/icons-material';
-import phoneScrewdriver from '../assets/phone-screwdriver.svg';
+import menuImage from '../assets/imagen del menu.jpeg';
 
 // Componentes estilizados
 const AuthContainer = styled(Box)(({ theme }) => ({
@@ -910,17 +910,28 @@ const LoginPage = () => {
             >
               <Box
                 component="img"
-                src={phoneScrewdriver}
-                alt="Phone Repair Illustration"
+                src={menuImage}
+                alt="Repair Service Illustration"
                 sx={{
-                  width: '100%',
-                  maxWidth: 350,
-                  filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.2))',
+                  width: '300px',
+                  height: '300px',
+                  objectFit: 'cover',
+                  borderRadius: '50%',
+                  border: '4px solid rgba(255,255,255,0.2)',
+                  padding: '8px',
+                  background: 'rgba(255,255,255,0.1)',
+                  backdropFilter: 'blur(8px)',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
                   transform: isRegister
                     ? 'perspective(1500px) rotateY(10deg) rotateX(5deg)'
                     : 'perspective(1500px) rotateY(-10deg) rotateX(5deg)',
-                  zIndex: 2,
-                  transition: 'transform 0.8s ease-in-out',
+                  transition: 'transform 0.8s ease-in-out, filter 0.3s ease',
+                  '&:hover': {
+                    filter: 'brightness(1.1)',
+                    transform: isRegister
+                      ? 'perspective(1500px) rotateY(5deg) rotateX(2deg) scale(1.05)'
+                      : 'perspective(1500px) rotateY(-5deg) rotateX(2deg) scale(1.05)'
+                  }
                 }}
               />
             </Slide>

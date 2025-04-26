@@ -34,6 +34,7 @@ import {
   Logout as LogoutIcon
 } from '@mui/icons-material';
 import { useAuth } from '../../contexts/AuthContext';
+import serfixLogo from '../../assets/Logox.jpeg';
 
 const drawerWidth = 240;
 
@@ -81,15 +82,15 @@ const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
   position: 'relative',
   overflow: 'hidden',
   '&.Mui-selected': {
-    background: 'rgba(211, 47, 47, 0.1)',
-    color: '#d32f2f',
+    background: 'linear-gradient(45deg, #c31c17 30%, #e53935 90%)',
+    color: '#ffffff',
     fontWeight: 600,
-    boxShadow: '0 2px 8px rgba(211, 47, 47, 0.15)',
+    boxShadow: '0 4px 15px rgba(195, 28, 23, 0.25)',
     '&:hover': {
-      background: 'rgba(211, 47, 47, 0.15)',
+      background: 'linear-gradient(45deg, #d32f2f 30%, #f44336 90%)',
     },
     '& .MuiListItemIcon-root': {
-      color: '#d32f2f',
+      color: '#ffffff',
     },
     '&::after': {
       content: '""',
@@ -98,12 +99,12 @@ const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
       top: 0,
       height: '100%',
       width: '4px',
-      background: 'linear-gradient(to bottom, #d32f2f, #f44336)',
+      background: 'linear-gradient(to bottom, #ffffff, rgba(255,255,255,0.5))',
       borderRadius: '0 2px 2px 0',
     }
   },
   '&:hover': {
-    background: 'rgba(0, 0, 0, 0.04)',
+    background: 'rgba(195, 28, 23, 0.08)',
     transform: 'translateY(-2px)',
     boxShadow: '0 4px 10px rgba(0, 0, 0, 0.07)',
   }
@@ -209,9 +210,30 @@ const DashboardLayout = () => {
           >
             <MenuIcon />
           </MenuButton>
-          <Logo variant="h6" noWrap>
-            SERFIX
-          </Logo>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box 
+              component="img" 
+              src={serfixLogo} 
+              alt="Serfix Logo" 
+              sx={{ 
+                height: 45, 
+                width: 45, 
+                mr: 2,
+                borderRadius: '50%',
+                border: '2px solid rgba(255,255,255,0.2)',
+                filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.2))',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'scale(1.1) rotate(-5deg)',
+                  filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))',
+                  border: '2px solid rgba(255,255,255,0.4)'
+                }
+              }}
+            />
+            <Logo variant="h6" noWrap>
+              SERFIX
+            </Logo>
+          </Box>
           {user && (
             <UserBox>
               <Tooltip title={user.email || 'Usuario'}>

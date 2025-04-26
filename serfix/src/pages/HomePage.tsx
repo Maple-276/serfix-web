@@ -14,8 +14,8 @@ import {
 } from '@mui/icons-material';
 import smartphoneRepair from '../assets/smartphone-repair.svg';
 import workshopImage from '../assets/workshop.svg';
-import serfixLogo from '../assets/serfix-logo.svg';
-import smartphoneHero from '../assets/smartphone-hero.svg';
+import serfixLogo from '../assets/Logox.jpeg';
+import menuImage from '../assets/imagen del menu.jpeg';
 import technicianImage from '../assets/technician.svg';
 
 const HomePage = () => {
@@ -53,10 +53,18 @@ const HomePage = () => {
             src={serfixLogo} 
             alt="Serfix Logo" 
             sx={{ 
-              height: 50, 
-              width: 50, 
-              mr: 1,
-              filter: 'drop-shadow(0 2px 5px rgba(0,0,0,0.2))'
+              height: 70, 
+              width: 70, 
+              mr: 2,
+              borderRadius: '50%',
+              border: '2px solid rgba(255,255,255,0.2)',
+              filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.15))',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'scale(1.1) rotate(-5deg)',
+                filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.2))',
+                border: '2px solid rgba(255,255,255,0.4)'
+              }
             }}
           />
           <Typography 
@@ -365,14 +373,19 @@ const HomePage = () => {
             >
               <Box 
                 component="img" 
-                src={smartphoneHero} 
+                src={menuImage} 
                 alt="Smartphone repair illustration" 
                 sx={{ 
                   maxWidth: '100%', 
-                  height: 'auto',
-                  maxHeight: 500,
-                  filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.15))',
-                  transition: 'transform 0.5s ease',
+                  width: '400px',
+                  height: '400px',
+                  objectFit: 'cover',
+                  borderRadius: '50%',
+                  border: `3px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+                  padding: '10px',
+                  background: '#fff',
+                  boxShadow: `0 20px 30px ${alpha(theme.palette.primary.main, 0.15)}`,
+                  transition: 'all 0.5s ease',
                   animation: 'float 3s ease-in-out infinite',
                   '@keyframes float': {
                     '0%': {
@@ -384,6 +397,11 @@ const HomePage = () => {
                     '100%': {
                       transform: 'translateY(0px)'
                     }
+                  },
+                  '&:hover': {
+                    transform: 'scale(1.05)',
+                    border: `3px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+                    boxShadow: `0 25px 35px ${alpha(theme.palette.primary.main, 0.2)}`
                   }
                 }}
               />
